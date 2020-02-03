@@ -3,20 +3,20 @@ package ru.fds.tavrzauditcollateral.rowmapper;
 
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Component;
-import ru.fds.tavrzauditcollateral.domain.sql.LoanAgreementAuditDateClosed;
-import ru.fds.tavrzauditcollateral.domain.sql.LoanAgreementName;
+import ru.fds.tavrzauditcollateral.domain.sql.ObjectAudit;
+import ru.fds.tavrzauditcollateral.domain.sql.ObjectAuditImpl;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
 @Component
-public class LoanAgreementAuditDateClosedWrapper implements RowMapper<LoanAgreementAuditDateClosed> {
+public class LoanAgreementAuditDateClosedWrapper implements RowMapper<ObjectAudit> {
     @Override
-    public LoanAgreementAuditDateClosed mapRow(ResultSet rs, int rowNum) throws SQLException {
-        return LoanAgreementAuditDateClosed.builder()
-                .loanAgreementId(rs.getLong(1))
-                .loanAgreementName(new LoanAgreementName(rs.getString(2), rs.getDate(3).toLocalDate()))
-                .dateEndLA(rs.getDate(4).toLocalDate())
+    public ObjectAudit mapRow(ResultSet rs, int rowNum) throws SQLException {
+        return ObjectAuditImpl.builder()
+                .id(rs.getLong(1))
+                .name(rs.getString(2) + " от " + rs.getDate(3).toString())
+                .valueInField(rs.getDate(4).toString())
                 .build();
     }
 }

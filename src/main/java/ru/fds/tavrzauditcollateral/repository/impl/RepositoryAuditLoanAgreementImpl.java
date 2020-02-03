@@ -5,9 +5,7 @@ import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.stereotype.Repository;
-import ru.fds.tavrzauditcollateral.domain.sql.LoanAgreementAuditDateClosed;
-import ru.fds.tavrzauditcollateral.domain.sql.LoanAgreementAuditLowCollateralValue;
-import ru.fds.tavrzauditcollateral.domain.sql.LoanAgreementWithoutPA;
+import ru.fds.tavrzauditcollateral.domain.sql.ObjectAudit;
 import ru.fds.tavrzauditcollateral.repository.RepositoryAuditLoanAgreement;
 import ru.fds.tavrzauditcollateral.rowmapper.LoanAgreementAuditDateClosedWrapper;
 import ru.fds.tavrzauditcollateral.rowmapper.LoanAgreementAuditLowCollateralWrapper;
@@ -91,12 +89,12 @@ public class RepositoryAuditLoanAgreementImpl implements RepositoryAuditLoanAgre
     }
 
     @Override
-    public Collection<LoanAgreementAuditDateClosed> getLoanAgreementWithDateClosedOverdue(){
+    public Collection<ObjectAudit> getLoanAgreementWithDateClosedOverdue(){
         return template.query(QUERY_LA_WITH_DATE_CLOSED_OVERDUE, loanAgreementAuditDateClosedWrapper);
     }
 
     @Override
-    public Optional<LoanAgreementAuditDateClosed> isDateClosedOverDue(Long loanAgreementId){
+    public Optional<ObjectAudit> isDateClosedOverDue(Long loanAgreementId){
         SqlParameterSource parameterSource = new MapSqlParameterSource().addValue(PARAM_LA_ID, loanAgreementId);
         try {
             return Optional.ofNullable(template.queryForObject(QUERY_IS_LA_DATE_END_OVERDUE,
@@ -108,12 +106,12 @@ public class RepositoryAuditLoanAgreementImpl implements RepositoryAuditLoanAgre
     }
 
     @Override
-    public Collection<LoanAgreementAuditLowCollateralValue> getLoanAgreementWithLowCollateralValue(){
+    public Collection<ObjectAudit> getLoanAgreementWithLowCollateralValue(){
         return template.query(QUERY_LA_WITH_LOW_COLLATERAL_VALUE, loanAgreementAuditLowCollateralWrapper);
     }
 
     @Override
-    public Optional<LoanAgreementAuditLowCollateralValue> isLowCollateralSum(Long loanAgreementId){
+    public Optional<ObjectAudit> isLowCollateralSum(Long loanAgreementId){
         SqlParameterSource parameterSource = new MapSqlParameterSource().addValue(PARAM_LA_ID, loanAgreementId);
         try {
             return Optional.ofNullable(template.queryForObject(QUERY_IS_LA_LOW_COLLATERAL_VALUE,
@@ -125,12 +123,12 @@ public class RepositoryAuditLoanAgreementImpl implements RepositoryAuditLoanAgre
     }
 
     @Override
-    public Collection<LoanAgreementWithoutPA> getLoanAgreementWithoutPledge(){
+    public Collection<ObjectAudit> getLoanAgreementWithoutPledge(){
         return template.query(QUERY_LA_WITHOUT_PA, loanAgreementWithoutPAWrapper);
     }
 
     @Override
-    public Optional<LoanAgreementWithoutPA> isNotHavePledgeAgreements(Long loanAgreementId){
+    public Optional<ObjectAudit> isHaveNotPledgeAgreements(Long loanAgreementId){
         SqlParameterSource parameterSource = new MapSqlParameterSource().addValue(PARAM_LA_ID , loanAgreementId);
         try {
             return Optional.ofNullable(template.queryForObject(QUERY_IS_LA_WITHOUT_PA,

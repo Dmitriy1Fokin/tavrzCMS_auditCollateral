@@ -1,39 +1,46 @@
-package ru.fds.tavrzauditcollateral.service;
+package ru.fds.tavrzauditcollateral.service.impl;
 
-import org.springframework.stereotype.Component;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.stereotype.Service;
 import ru.fds.tavrzauditcollateral.dictionary.AuditLevel;
 import ru.fds.tavrzauditcollateral.dictionary.AuditStatus;
+import ru.fds.tavrzauditcollateral.dictionary.TypeOfObject;
 import ru.fds.tavrzauditcollateral.domain.nosql.AuditResult;
 import ru.fds.tavrzauditcollateral.repository.RepositoryAuditLoanAgreement;
 import ru.fds.tavrzauditcollateral.repository.RepositoryAuditResult;
+import ru.fds.tavrzauditcollateral.service.ObjectAuditService;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-@Component
-public class LoanAgreementService {
+@Slf4j
+@Service
+@Qualifier("loanAgreementService")
+public class LoanAgreementServiceImpl implements ObjectAuditService {
 
     private final RepositoryAuditLoanAgreement repositoryAuditLoanAgreement;
     private final RepositoryAuditResult repositoryAuditResult;
 
-    public LoanAgreementService(RepositoryAuditLoanAgreement repositoryAuditLoanAgreement,
-                                RepositoryAuditResult repositoryAuditResult) {
+    public LoanAgreementServiceImpl(RepositoryAuditLoanAgreement repositoryAuditLoanAgreement,
+                                    RepositoryAuditResult repositoryAuditResult) {
         this.repositoryAuditLoanAgreement = repositoryAuditLoanAgreement;
         this.repositoryAuditResult = repositoryAuditResult;
     }
 
-    public void doAuditResultAboutNewLoanAgreement(Long loanAgreementId){
+    @Override
+    public void doAuditAboutNewObject(Long id){
         Collection<AuditResult> auditResults = new ArrayList<>();
-        repositoryAuditLoanAgreement.isDateClosedOverDue(loanAgreementId).ifPresent(loanAgreementAuditDateClosed -> {
+        repositoryAuditLoanAgreement.isDateClosedOverDue(id).ifPresent(loanAgreementAuditDateClosed -> {
             AuditResult auditResult = AuditResult.builder()
                     .date(LocalDate.now())
-                    .typeOfObject(loanAgreementAuditDateClosed.getTypeOfObject())
+                    .typeOfObject(TypeOfObject.LOAN_AGREEMENT)
                     .objectId(loanAgreementAuditDateClosed.getId())
                     .nameOfObject(loanAgreementAuditDateClosed.getNameObject())
-                    .fieldNameWithError(loanAgreementAuditDateClosed.fieldNameWithError())
-                    .valueInField(loanAgreementAuditDateClosed.getValueInField())
+                    .fieldNameWithError("dateBeginLA")
+                    .valueInField(loanAgreementAuditDateClosed.getWrongValueInField())
                     .auditLevel(AuditLevel.LOW)
                     .descriptionResult("Кредитный договор не закрыт")
                     .advice(List.of("Закрыть договор", "Изменить дату окончания КД", "Присвоить статус - Проблемный"))
@@ -43,14 +50,14 @@ public class LoanAgreementService {
             auditResults.add(auditResult);
         });
 
-        repositoryAuditLoanAgreement.isLowCollateralSum(loanAgreementId).ifPresent(loanAgreementAuditLowCollateralValue -> {
+        repositoryAuditLoanAgreement.isLowCollateralSum(id).ifPresent(loanAgreementAuditLowCollateralValue -> {
             AuditResult auditResult = AuditResult.builder()
                     .date(LocalDate.now())
-                    .typeOfObject(loanAgreementAuditLowCollateralValue.getTypeOfObject())
+                    .typeOfObject(TypeOfObject.LOAN_AGREEMENT)
                     .objectId(loanAgreementAuditLowCollateralValue.getId())
                     .nameOfObject(loanAgreementAuditLowCollateralValue.getNameObject())
-                    .fieldNameWithError(loanAgreementAuditLowCollateralValue.fieldNameWithError())
-                    .valueInField(loanAgreementAuditLowCollateralValue.getValueInField())
+                    .fieldNameWithError("amountLA")
+                    .valueInField(loanAgreementAuditLowCollateralValue.getWrongValueInField())
                     .auditLevel(AuditLevel.LOW)
                     .descriptionResult("Обеспеченность договора ниже кредитной задолженности")
                     .advice(List.of("Снизить кредитную задолженность", "Предоставить дополнитнльгый залог"))
@@ -60,14 +67,14 @@ public class LoanAgreementService {
             auditResults.add(auditResult);
         });
 
-        repositoryAuditLoanAgreement.isNotHavePledgeAgreements(loanAgreementId).ifPresent(loanAgreementWithoutPA -> {
+        repositoryAuditLoanAgreement.isHaveNotPledgeAgreements(id).ifPresent(loanAgreementWithoutPA -> {
             AuditResult auditResult = AuditResult.builder()
                     .date(LocalDate.now())
-                    .typeOfObject(loanAgreementWithoutPA.getTypeOfObject())
+                    .typeOfObject(TypeOfObject.LOAN_AGREEMENT)
                     .objectId(loanAgreementWithoutPA.getId())
                     .nameOfObject(loanAgreementWithoutPA.getNameObject())
-                    .fieldNameWithError(loanAgreementWithoutPA.fieldNameWithError())
-                    .valueInField(loanAgreementWithoutPA.getValueInField())
+                    .fieldNameWithError("")
+                    .valueInField(loanAgreementWithoutPA.getWrongValueInField())
                     .auditLevel(AuditLevel.MEDIUM)
                     .descriptionResult("Отсутствуют договоры залога")
                     .advice(List.of("Заключить договор залога", "Закрыть кредитный договор"))
@@ -77,6 +84,27 @@ public class LoanAgreementService {
             auditResults.add(auditResult);
         });
 
+        log.debug("doAuditResultAboutNewLoanAgreement. Collection<AuditResult>: " + auditResults.toString());
         repositoryAuditResult.saveAll(auditResults);
+    }
+
+    @Override
+    public void doAuditAboutExitObject(Long id){
+
+    }
+
+    @Override
+    public void doAuditAboutAllObjects(){
+
+    }
+
+    @Override
+    public Collection<AuditResult> getAuditResultsAboutObject(Long id){
+        return null;
+    }
+
+    @Override
+    public Collection<AuditResult> getAuditResultsAboutObject(Long id, AuditStatus auditStatus){
+        return null;
     }
 }

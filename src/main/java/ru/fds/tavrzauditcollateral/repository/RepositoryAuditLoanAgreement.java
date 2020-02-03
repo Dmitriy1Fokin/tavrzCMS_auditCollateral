@@ -1,22 +1,15 @@
 package ru.fds.tavrzauditcollateral.repository;
 
-import ru.fds.tavrzauditcollateral.domain.sql.LoanAgreementAuditDateClosed;
-import ru.fds.tavrzauditcollateral.domain.sql.LoanAgreementAuditLowCollateralValue;
-import ru.fds.tavrzauditcollateral.domain.sql.LoanAgreementWithoutPA;
+import ru.fds.tavrzauditcollateral.domain.sql.ObjectAudit;
 
 import java.util.Collection;
 import java.util.Optional;
 
 public interface RepositoryAuditLoanAgreement {
-    Collection<LoanAgreementAuditDateClosed> getLoanAgreementWithDateClosedOverdue();
-
-    Optional<LoanAgreementAuditDateClosed> isDateClosedOverDue(Long loanAgreementId);
-
-    Collection<LoanAgreementAuditLowCollateralValue> getLoanAgreementWithLowCollateralValue();
-
-    Optional<LoanAgreementAuditLowCollateralValue> isLowCollateralSum(Long loanAgreementId);
-
-    Collection<LoanAgreementWithoutPA> getLoanAgreementWithoutPledge();
-
-    Optional<LoanAgreementWithoutPA> isNotHavePledgeAgreements(Long loanAgreementId);
+    Collection<ObjectAudit> getLoanAgreementWithDateClosedOverdue();
+    Optional<ObjectAudit> isDateClosedOverDue(Long loanAgreementId);
+    Collection<ObjectAudit> getLoanAgreementWithLowCollateralValue();
+    Optional<ObjectAudit> isLowCollateralSum(Long loanAgreementId);
+    Collection<ObjectAudit> getLoanAgreementWithoutPledge();
+    Optional<ObjectAudit> isHaveNotPledgeAgreements(Long loanAgreementId);
 }
