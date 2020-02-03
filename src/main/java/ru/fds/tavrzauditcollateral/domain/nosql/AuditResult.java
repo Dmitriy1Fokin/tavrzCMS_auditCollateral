@@ -1,7 +1,8 @@
-package ru.fds.tavrzauditcollateral.domain;
+package ru.fds.tavrzauditcollateral.domain.nosql;
 
 import lombok.Builder;
-import lombok.Data;
+import lombok.Getter;
+import lombok.ToString;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 import ru.fds.tavrzauditcollateral.dictionary.AuditLevel;
@@ -9,8 +10,10 @@ import ru.fds.tavrzauditcollateral.dictionary.AuditStatus;
 import ru.fds.tavrzauditcollateral.dictionary.TypeOfObject;
 
 import java.time.LocalDate;
+import java.util.Collection;
 
-@Data
+@Getter
+@ToString
 @Builder
 @Document(collection = "audit_actual")
 public class AuditResult {
@@ -24,15 +27,17 @@ public class AuditResult {
 
     private Long objectId;
 
+    private String nameOfObject;
+
+    private String fieldNameWithError;
+
+    private String valueInField;
+
     private AuditLevel auditLevel;
 
     private String descriptionResult;
 
-    private String fieldWithError;
-
-    private String valueInField;
-
-    private String advice;
+    private Collection<String> advice;
 
     private AuditStatus auditStatus;
 }

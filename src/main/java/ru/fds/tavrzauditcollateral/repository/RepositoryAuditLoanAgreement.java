@@ -1,22 +1,22 @@
 package ru.fds.tavrzauditcollateral.repository;
 
-import org.springframework.stereotype.Repository;
+import ru.fds.tavrzauditcollateral.domain.sql.LoanAgreementAuditDateClosed;
+import ru.fds.tavrzauditcollateral.domain.sql.LoanAgreementAuditLowCollateralValue;
+import ru.fds.tavrzauditcollateral.domain.sql.LoanAgreementWithoutPA;
 
-import javax.persistence.EntityManager;
+import java.util.Collection;
+import java.util.Optional;
 
-@Repository
-public class RepositoryAuditLoanAgreement {
-    private final EntityManager entityManager;
+public interface RepositoryAuditLoanAgreement {
+    Collection<LoanAgreementAuditDateClosed> getLoanAgreementWithDateClosedOverdue();
 
-    public RepositoryAuditLoanAgreement(EntityManager entityManager) {
-        this.entityManager = entityManager;
-    }
+    Optional<LoanAgreementAuditDateClosed> isDateClosedOverDue(Long loanAgreementId);
 
-    public String stringTest(){
-        return entityManager.createNativeQuery("select name\n" +
-                                                    "from pledge_subject\n" +
-                                                    "limit 1")
-                .getSingleResult().toString();
+    Collection<LoanAgreementAuditLowCollateralValue> getLoanAgreementWithLowCollateralValue();
 
-    }
+    Optional<LoanAgreementAuditLowCollateralValue> isLowCollateralSum(Long loanAgreementId);
+
+    Collection<LoanAgreementWithoutPA> getLoanAgreementWithoutPledge();
+
+    Optional<LoanAgreementWithoutPA> isNotHavePledgeAgreements(Long loanAgreementId);
 }

@@ -27,7 +27,7 @@ public class RabbitConfiguration {
     }
 
     @Bean
-    public Queue myQueue1() {
-        return new Queue("queue1");
+    public Queue queueAuditNewLoanAgreement(){
+        return new Queue("queueAuditNewLoanAgreement");
     }
 }
