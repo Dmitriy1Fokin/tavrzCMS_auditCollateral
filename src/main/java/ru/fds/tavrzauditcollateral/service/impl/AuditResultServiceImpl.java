@@ -3,6 +3,7 @@ package ru.fds.tavrzauditcollateral.service.impl;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import ru.fds.tavrzauditcollateral.dictionary.AuditStatus;
 import ru.fds.tavrzauditcollateral.domain.nosql.AuditResult;
 import ru.fds.tavrzauditcollateral.service.AuditResultService;
 
@@ -18,6 +19,11 @@ public class AuditResultServiceImpl implements AuditResultService {
 
     @Override
     public Collection<AuditResult> getAllAuditResults(Pageable pageable) {
+        return null;
+    }
+
+    @Override
+    public AuditResult setAuditStatus(String auditResultId, AuditStatus auditStatus) {
         return null;
     }
 }

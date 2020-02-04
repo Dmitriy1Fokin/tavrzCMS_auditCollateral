@@ -13,21 +13,21 @@ import ru.fds.tavrzauditcollateral.service.ObjectAuditService;
 @Component
 public class LoanAgreementListener {
 
-    private final ObjectAuditService objectAuditService;
+    private final ObjectAuditService loanAgreementService;
 
-    public LoanAgreementListener(@Qualifier("loanAgreementService") ObjectAuditService objectAuditService) {
-        this.objectAuditService = objectAuditService;
+    public LoanAgreementListener(@Qualifier("loanAgreementService") ObjectAuditService loanAgreementService) {
+        this.loanAgreementService = loanAgreementService;
     }
 
     @RabbitListener(queues = "${queue_name.audit_new_loan_agreement}")
     public void auditNewLoanAgreement(Long loanAgreementId){
         log.debug("auditNewLoanAgreement. loanAgreementId: " + loanAgreementId);
-        objectAuditService.doAuditAboutNewObject(loanAgreementId);
+        loanAgreementService.doAuditAboutNewObject(loanAgreementId);
     }
 
     @RabbitListener(queues = "${queue_name.audit_exist_loan_agreement}")
     public void auditExistLoanAgreement(Long loanAgreementId){
         log.debug("auditExistLoanAgreement. loanAgreementId: " + loanAgreementId);
-        objectAuditService.doAuditAboutExitObject(loanAgreementId);
+        loanAgreementService.doAuditAboutExitObject(loanAgreementId);
     }
 }
