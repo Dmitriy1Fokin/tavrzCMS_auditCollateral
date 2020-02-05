@@ -1,6 +1,6 @@
 package ru.fds.tavrzauditcollateral.repository.impl;
 
-import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.dao.support.DataAccessUtils;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
@@ -96,13 +96,9 @@ public class RepositoryAuditLoanAgreementImpl implements RepositoryAuditLoanAgre
     @Override
     public Optional<ObjectAudit> isDateClosedOverDue(Long loanAgreementId){
         SqlParameterSource parameterSource = new MapSqlParameterSource().addValue(PARAM_LA_ID, loanAgreementId);
-        try {
-            return Optional.ofNullable(template.queryForObject(QUERY_IS_LA_DATE_END_OVERDUE,
-                    parameterSource,
-                    loanAgreementAuditDateClosedWrapper));
-        }catch (EmptyResultDataAccessException ex){
-            return Optional.empty();
-        }
+        return Optional.ofNullable(DataAccessUtils.singleResult(template.query(QUERY_IS_LA_DATE_END_OVERDUE,
+                parameterSource,
+                loanAgreementAuditDateClosedWrapper)));
     }
 
     @Override
@@ -113,13 +109,9 @@ public class RepositoryAuditLoanAgreementImpl implements RepositoryAuditLoanAgre
     @Override
     public Optional<ObjectAudit> isLowCollateralSum(Long loanAgreementId){
         SqlParameterSource parameterSource = new MapSqlParameterSource().addValue(PARAM_LA_ID, loanAgreementId);
-        try {
-            return Optional.ofNullable(template.queryForObject(QUERY_IS_LA_LOW_COLLATERAL_VALUE,
-                    parameterSource,
-                    loanAgreementAuditLowCollateralWrapper));
-        }catch (EmptyResultDataAccessException ex){
-            return Optional.empty();
-        }
+        return Optional.ofNullable(DataAccessUtils.singleResult(template.query(QUERY_IS_LA_LOW_COLLATERAL_VALUE,
+                parameterSource,
+                loanAgreementAuditLowCollateralWrapper)));
     }
 
     @Override
@@ -130,12 +122,8 @@ public class RepositoryAuditLoanAgreementImpl implements RepositoryAuditLoanAgre
     @Override
     public Optional<ObjectAudit> isHaveNotPledgeAgreements(Long loanAgreementId){
         SqlParameterSource parameterSource = new MapSqlParameterSource().addValue(PARAM_LA_ID , loanAgreementId);
-        try {
-            return Optional.ofNullable(template.queryForObject(QUERY_IS_LA_WITHOUT_PA,
-                    parameterSource,
-                    loanAgreementWithoutPAWrapper));
-        }catch (EmptyResultDataAccessException ex){
-            return Optional.empty();
-        }
+        return Optional.ofNullable(DataAccessUtils.singleResult(template.query(QUERY_IS_LA_WITHOUT_PA,
+                parameterSource,
+                loanAgreementWithoutPAWrapper)));
     }
 }

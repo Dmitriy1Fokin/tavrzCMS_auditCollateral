@@ -41,7 +41,7 @@ public class LoanAgreementServiceImpl implements ObjectAuditService {
                     .typeOfObject(TypeOfObject.LOAN_AGREEMENT)
                     .objectId(loanAgreementAuditDateClosed.getId())
                     .nameOfObject(loanAgreementAuditDateClosed.getNameObject())
-                    .fieldNameWithError("dateBeginLA")
+                    .fieldNameWithError("dateEndLA")
                     .valueInField(loanAgreementAuditDateClosed.getWrongValueInField())
                     .auditLevel(AuditLevel.LOW)
                     .descriptionResult("Кредитный договор не закрыт")
