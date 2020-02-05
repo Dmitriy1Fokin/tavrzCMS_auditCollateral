@@ -21,13 +21,13 @@ public class LoanAgreementListener {
 
     @RabbitListener(queues = "${queue_name.audit_new_loan_agreement}")
     public void auditNewLoanAgreement(Long loanAgreementId){
-        log.debug("auditNewLoanAgreement. loanAgreementId: " + loanAgreementId);
+        log.debug("auditNewLoanAgreement. loanAgreementId: {}", loanAgreementId);
         loanAgreementService.doAuditAboutNewObject(loanAgreementId);
     }
 
     @RabbitListener(queues = "${queue_name.audit_exist_loan_agreement}")
     public void auditExistLoanAgreement(Long loanAgreementId){
-        log.debug("auditExistLoanAgreement. loanAgreementId: " + loanAgreementId);
+        log.debug("auditExistLoanAgreement. loanAgreementId: {}", loanAgreementId);
         loanAgreementService.doAuditAboutExitObject(loanAgreementId);
     }
 }

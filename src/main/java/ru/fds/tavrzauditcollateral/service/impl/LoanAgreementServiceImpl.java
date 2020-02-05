@@ -3,6 +3,7 @@ package ru.fds.tavrzauditcollateral.service.impl;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import ru.fds.tavrzauditcollateral.dictionary.AuditLevel;
 import ru.fds.tavrzauditcollateral.dictionary.AuditStatus;
 import ru.fds.tavrzauditcollateral.dictionary.TypeOfObject;
@@ -31,6 +32,7 @@ public class LoanAgreementServiceImpl implements ObjectAuditService {
     }
 
     @Override
+    @Transactional
     public void doAuditAboutNewObject(Long id){
         Collection<AuditResult> auditResults = new ArrayList<>();
         repositoryAuditLoanAgreement.isDateClosedOverDue(id).ifPresent(loanAgreementAuditDateClosed -> {
@@ -84,16 +86,18 @@ public class LoanAgreementServiceImpl implements ObjectAuditService {
             auditResults.add(auditResult);
         });
 
-        log.debug("doAuditResultAboutNewLoanAgreement. Collection<AuditResult>: " + auditResults.toString());
+        log.debug("doAuditResultAboutNewLoanAgreement. Collection<AuditResult>: {}", auditResults.toString());
         repositoryAuditResult.saveAll(auditResults);
     }
 
     @Override
+    @Transactional
     public void doAuditAboutExitObject(Long id){
 
     }
 
     @Override
+    @Transactional
     public void doAuditAboutAllObjects(){
 
     }
