@@ -14,8 +14,6 @@ public interface RepositoryAuditPledgeAgreement {
     Optional<ObjectAudit> isZeroZsDz(Long pledgeAgreementId);
     Collection<ObjectAudit> getPledgeAgreementsWithZeroZsZZ();
     Optional<ObjectAudit> isZeroZsZZ(Long pledgeAgreementId);
-    Collection<ObjectAudit> getPledgeAgreementsWithoutPerv();
-    Optional<ObjectAudit> isHaveNotPerv(Long pledgeAgreementId);
     Collection<ObjectAudit> getPledgeAgreementsWithoutPledgeSubjects();
     Optional<ObjectAudit> isHaveNotPledgeSubjects(Long pledgeAgreementId);
 }

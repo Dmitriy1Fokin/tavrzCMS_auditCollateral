@@ -9,7 +9,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 @Component
-public class LoanAgreementAuditLowCollateralWrapper implements RowMapper<ObjectAudit> {
+public class AgreementAuditLowCostWrapper implements RowMapper<ObjectAudit> {
     @Override
     public ObjectAudit mapRow(ResultSet rs, int rowNum) throws SQLException {
         return ObjectAuditImpl.builder()

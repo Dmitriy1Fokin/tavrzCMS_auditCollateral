@@ -7,9 +7,9 @@ import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.stereotype.Repository;
 import ru.fds.tavrzauditcollateral.domain.sql.ObjectAudit;
 import ru.fds.tavrzauditcollateral.repository.RepositoryAuditLoanAgreement;
-import ru.fds.tavrzauditcollateral.rowmapper.LoanAgreementAuditDateClosedWrapper;
-import ru.fds.tavrzauditcollateral.rowmapper.LoanAgreementAuditLowCollateralWrapper;
-import ru.fds.tavrzauditcollateral.rowmapper.LoanAgreementWithoutPAWrapper;
+import ru.fds.tavrzauditcollateral.rowmapper.AgreementAuditDateWrapper;
+import ru.fds.tavrzauditcollateral.rowmapper.AgreementAuditLowCostWrapper;
+import ru.fds.tavrzauditcollateral.rowmapper.AgreementAuditCountWrapper;
 
 import java.util.Collection;
 import java.util.Optional;
@@ -63,6 +63,7 @@ public class RepositoryAuditLoanAgreementImpl implements RepositoryAuditLoanAgre
     private static final String QUERY_LA_WITHOUT_PA = "select k.kd_id, k.num_kd, k.date_begin_kd, count(kddz.dz_id)\n" +
                                                         "from kd k\n   " +
                                                         "left join kd_dz kddz on k.kd_id = kddz.kd_id\n" +
+                                                        "where k.status = 'открыт'\n" +
                                                         "group by 1\n" +
                                                         "having count(kddz.dz_id) = 0";
 
@@ -70,27 +71,28 @@ public class RepositoryAuditLoanAgreementImpl implements RepositoryAuditLoanAgre
                                                             "from kd k\n" +
                                                             "left join kd_dz kddz on k.kd_id = kddz.kd_id\n" +
                                                             "where k.kd_id = :loanAgreementId\n" +
-                                                            "group by 1";
+                                                            "group by 1\n" +
+                                                            "having count(kddz.dz_id) = 0";
 
 
     private final NamedParameterJdbcTemplate template;
-    private final LoanAgreementAuditDateClosedWrapper loanAgreementAuditDateClosedWrapper;
-    private final LoanAgreementAuditLowCollateralWrapper loanAgreementAuditLowCollateralWrapper;
-    private final LoanAgreementWithoutPAWrapper loanAgreementWithoutPAWrapper;
+    private final AgreementAuditDateWrapper agreementAuditDateWrapper;
+    private final AgreementAuditLowCostWrapper agreementAuditLowCostWrapper;
+    private final AgreementAuditCountWrapper agreementAuditCountWrapper;
 
     public RepositoryAuditLoanAgreementImpl(NamedParameterJdbcTemplate template,
-                                            LoanAgreementAuditDateClosedWrapper loanAgreementAuditDateClosedWrapper,
-                                            LoanAgreementAuditLowCollateralWrapper loanAgreementAuditLowCollateralWrapper,
-                                            LoanAgreementWithoutPAWrapper loanAgreementWithoutPAWrapper) {
+                                            AgreementAuditDateWrapper agreementAuditDateWrapper,
+                                            AgreementAuditLowCostWrapper agreementAuditLowCostWrapper,
+                                            AgreementAuditCountWrapper agreementAuditCountWrapper) {
         this.template = template;
-        this.loanAgreementAuditDateClosedWrapper = loanAgreementAuditDateClosedWrapper;
-        this.loanAgreementAuditLowCollateralWrapper = loanAgreementAuditLowCollateralWrapper;
-        this.loanAgreementWithoutPAWrapper = loanAgreementWithoutPAWrapper;
+        this.agreementAuditDateWrapper = agreementAuditDateWrapper;
+        this.agreementAuditLowCostWrapper = agreementAuditLowCostWrapper;
+        this.agreementAuditCountWrapper = agreementAuditCountWrapper;
     }
 
     @Override
     public Collection<ObjectAudit> getLoanAgreementWithDateClosedOverdue(){
-        return template.query(QUERY_LA_WITH_DATE_CLOSED_OVERDUE, loanAgreementAuditDateClosedWrapper);
+        return template.query(QUERY_LA_WITH_DATE_CLOSED_OVERDUE, agreementAuditDateWrapper);
     }
 
     @Override
@@ -98,12 +100,12 @@ public class RepositoryAuditLoanAgreementImpl implements RepositoryAuditLoanAgre
         SqlParameterSource parameterSource = new MapSqlParameterSource().addValue(PARAM_LA_ID, loanAgreementId);
         return Optional.ofNullable(DataAccessUtils.singleResult(template.query(QUERY_IS_LA_DATE_END_OVERDUE,
                 parameterSource,
-                loanAgreementAuditDateClosedWrapper)));
+                agreementAuditDateWrapper)));
     }
 
     @Override
     public Collection<ObjectAudit> getLoanAgreementWithLowCollateralValue(){
-        return template.query(QUERY_LA_WITH_LOW_COLLATERAL_VALUE, loanAgreementAuditLowCollateralWrapper);
+        return template.query(QUERY_LA_WITH_LOW_COLLATERAL_VALUE, agreementAuditLowCostWrapper);
     }
 
     @Override
@@ -111,12 +113,12 @@ public class RepositoryAuditLoanAgreementImpl implements RepositoryAuditLoanAgre
         SqlParameterSource parameterSource = new MapSqlParameterSource().addValue(PARAM_LA_ID, loanAgreementId);
         return Optional.ofNullable(DataAccessUtils.singleResult(template.query(QUERY_IS_LA_LOW_COLLATERAL_VALUE,
                 parameterSource,
-                loanAgreementAuditLowCollateralWrapper)));
+                agreementAuditLowCostWrapper)));
     }
 
     @Override
     public Collection<ObjectAudit> getLoanAgreementWithoutPledge(){
-        return template.query(QUERY_LA_WITHOUT_PA, loanAgreementWithoutPAWrapper);
+        return template.query(QUERY_LA_WITHOUT_PA, agreementAuditCountWrapper);
     }
 
     @Override
@@ -124,6 +126,6 @@ public class RepositoryAuditLoanAgreementImpl implements RepositoryAuditLoanAgre
         SqlParameterSource parameterSource = new MapSqlParameterSource().addValue(PARAM_LA_ID , loanAgreementId);
         return Optional.ofNullable(DataAccessUtils.singleResult(template.query(QUERY_IS_LA_WITHOUT_PA,
                 parameterSource,
-                loanAgreementWithoutPAWrapper)));
+                agreementAuditCountWrapper)));
     }
 }
