@@ -9,7 +9,7 @@ import ru.fds.tavrzauditcollateral.domain.sql.ObjectAudit;
 import ru.fds.tavrzauditcollateral.repository.RepositoryAuditPledgeAgreement;
 import ru.fds.tavrzauditcollateral.rowmapper.AgreementAuditCountWrapper;
 import ru.fds.tavrzauditcollateral.rowmapper.AgreementAuditDateWrapper;
-import ru.fds.tavrzauditcollateral.rowmapper.AgreementAuditLowCostWrapper;
+import ru.fds.tavrzauditcollateral.rowmapper.AgreementAuditCostWrapper;
 
 import java.util.Collection;
 import java.util.Optional;
@@ -75,16 +75,16 @@ public class RepositoryAuditPledgeAgreementImpl implements RepositoryAuditPledge
 
     private final NamedParameterJdbcTemplate template;
     private final AgreementAuditDateWrapper agreementAuditDateWrapper;
-    private final AgreementAuditLowCostWrapper agreementAuditLowCostWrapper;
+    private final AgreementAuditCostWrapper agreementAuditCostWrapper;
     private final AgreementAuditCountWrapper agreementAuditCountWrapper;
 
     public RepositoryAuditPledgeAgreementImpl(NamedParameterJdbcTemplate template,
                                               AgreementAuditDateWrapper agreementAuditDateWrapper,
-                                              AgreementAuditLowCostWrapper agreementAuditLowCostWrapper,
+                                              AgreementAuditCostWrapper agreementAuditCostWrapper,
                                               AgreementAuditCountWrapper agreementAuditCountWrapper) {
         this.template = template;
         this.agreementAuditDateWrapper = agreementAuditDateWrapper;
-        this.agreementAuditLowCostWrapper = agreementAuditLowCostWrapper;
+        this.agreementAuditCostWrapper = agreementAuditCostWrapper;
         this.agreementAuditCountWrapper = agreementAuditCountWrapper;
     }
 
@@ -116,7 +116,7 @@ public class RepositoryAuditPledgeAgreementImpl implements RepositoryAuditPledge
 
     @Override
     public Collection<ObjectAudit> getPledgeAgreementsWithZeroZsDZ() {
-        return template.query(QUERY_PA_WITH_ZERO_ZS_DZ, agreementAuditLowCostWrapper);
+        return template.query(QUERY_PA_WITH_ZERO_ZS_DZ, agreementAuditCostWrapper);
     }
 
     @Override
@@ -124,12 +124,12 @@ public class RepositoryAuditPledgeAgreementImpl implements RepositoryAuditPledge
         SqlParameterSource parameterSource = new MapSqlParameterSource().addValue(PARAM_PA_ID, pledgeAgreementId);
         return Optional.ofNullable(DataAccessUtils.singleResult(template.query(QUERY_IS_PA_WITH_ZERO_ZS_DZ,
                 parameterSource,
-                agreementAuditLowCostWrapper)));
+                agreementAuditCostWrapper)));
     }
 
     @Override
     public Collection<ObjectAudit> getPledgeAgreementsWithZeroZsZZ() {
-        return template.query(QUERY_PA_WITH_ZERO_ZS_ZZ, agreementAuditLowCostWrapper);
+        return template.query(QUERY_PA_WITH_ZERO_ZS_ZZ, agreementAuditCostWrapper);
     }
 
     @Override
@@ -137,7 +137,7 @@ public class RepositoryAuditPledgeAgreementImpl implements RepositoryAuditPledge
         SqlParameterSource parameterSource = new MapSqlParameterSource().addValue(PARAM_PA_ID, pledgeAgreementId);
         return Optional.ofNullable(DataAccessUtils.singleResult(template.query(QUERY_IS_PA_WITH_ZERO_ZS_ZZ,
                 parameterSource,
-                agreementAuditLowCostWrapper)));
+                agreementAuditCostWrapper)));
     }
 
     @Override

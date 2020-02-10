@@ -8,7 +8,7 @@ import org.springframework.stereotype.Repository;
 import ru.fds.tavrzauditcollateral.domain.sql.ObjectAudit;
 import ru.fds.tavrzauditcollateral.repository.RepositoryAuditLoanAgreement;
 import ru.fds.tavrzauditcollateral.rowmapper.AgreementAuditDateWrapper;
-import ru.fds.tavrzauditcollateral.rowmapper.AgreementAuditLowCostWrapper;
+import ru.fds.tavrzauditcollateral.rowmapper.AgreementAuditCostWrapper;
 import ru.fds.tavrzauditcollateral.rowmapper.AgreementAuditCountWrapper;
 
 import java.util.Collection;
@@ -77,16 +77,16 @@ public class RepositoryAuditLoanAgreementImpl implements RepositoryAuditLoanAgre
 
     private final NamedParameterJdbcTemplate template;
     private final AgreementAuditDateWrapper agreementAuditDateWrapper;
-    private final AgreementAuditLowCostWrapper agreementAuditLowCostWrapper;
+    private final AgreementAuditCostWrapper agreementAuditCostWrapper;
     private final AgreementAuditCountWrapper agreementAuditCountWrapper;
 
     public RepositoryAuditLoanAgreementImpl(NamedParameterJdbcTemplate template,
                                             AgreementAuditDateWrapper agreementAuditDateWrapper,
-                                            AgreementAuditLowCostWrapper agreementAuditLowCostWrapper,
+                                            AgreementAuditCostWrapper agreementAuditCostWrapper,
                                             AgreementAuditCountWrapper agreementAuditCountWrapper) {
         this.template = template;
         this.agreementAuditDateWrapper = agreementAuditDateWrapper;
-        this.agreementAuditLowCostWrapper = agreementAuditLowCostWrapper;
+        this.agreementAuditCostWrapper = agreementAuditCostWrapper;
         this.agreementAuditCountWrapper = agreementAuditCountWrapper;
     }
 
@@ -105,7 +105,7 @@ public class RepositoryAuditLoanAgreementImpl implements RepositoryAuditLoanAgre
 
     @Override
     public Collection<ObjectAudit> getLoanAgreementWithLowCollateralValue(){
-        return template.query(QUERY_LA_WITH_LOW_COLLATERAL_VALUE, agreementAuditLowCostWrapper);
+        return template.query(QUERY_LA_WITH_LOW_COLLATERAL_VALUE, agreementAuditCostWrapper);
     }
 
     @Override
@@ -113,7 +113,7 @@ public class RepositoryAuditLoanAgreementImpl implements RepositoryAuditLoanAgre
         SqlParameterSource parameterSource = new MapSqlParameterSource().addValue(PARAM_LA_ID, loanAgreementId);
         return Optional.ofNullable(DataAccessUtils.singleResult(template.query(QUERY_IS_LA_LOW_COLLATERAL_VALUE,
                 parameterSource,
-                agreementAuditLowCostWrapper)));
+                agreementAuditCostWrapper)));
     }
 
     @Override
