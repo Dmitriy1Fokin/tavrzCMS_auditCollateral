@@ -6,11 +6,11 @@ import ru.fds.tavrzauditcollateral.domain.nosql.AuditResult;
 import java.util.Collection;
 
 public interface ObjectAuditService {
-    void doAuditAboutNewObject(Long id);
+    void executeAuditAboutNewObject(Long id);
 
-    void doAuditAboutExitObject(Long id);
+    void executeAuditAboutExistObject(Long id);
 
-    void doAuditAboutAllObjects();
+    void executeAuditAboutAllObjects();
 
     Collection<AuditResult> getAuditResultsAboutObject(Long id);
 

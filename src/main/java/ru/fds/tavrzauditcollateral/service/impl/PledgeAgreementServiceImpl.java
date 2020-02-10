@@ -17,19 +17,19 @@ public class PledgeAgreementServiceImpl implements ObjectAuditService {
 
     @Override
     @Transactional
-    public void doAuditAboutNewObject(Long id) {
+    public void executeAuditAboutNewObject(Long id) {
 
     }
 
     @Override
     @Transactional
-    public void doAuditAboutExitObject(Long id) {
+    public void executeAuditAboutExistObject(Long id) {
 
     }
 
     @Override
     @Transactional
-    public void doAuditAboutAllObjects() {
+    public void executeAuditAboutAllObjects() {
 
     }
 

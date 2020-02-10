@@ -7,6 +7,7 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 import ru.fds.tavrzauditcollateral.dictionary.AuditLevel;
 import ru.fds.tavrzauditcollateral.dictionary.AuditStatus;
+import ru.fds.tavrzauditcollateral.dictionary.TypeOfAudit;
 import ru.fds.tavrzauditcollateral.dictionary.TypeOfObject;
 
 import java.time.LocalDate;
@@ -29,7 +30,7 @@ public class AuditResult {
 
     private String nameOfObject;
 
-    private String fieldNameWithError;
+    private TypeOfAudit typeOfAudit;
 
     private String valueInField;
 

@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.fds.tavrzauditcollateral.dictionary.AuditLevel;
 import ru.fds.tavrzauditcollateral.dictionary.AuditStatus;
+import ru.fds.tavrzauditcollateral.dictionary.TypeOfAuditLoanAgreement;
 import ru.fds.tavrzauditcollateral.dictionary.TypeOfObject;
 import ru.fds.tavrzauditcollateral.domain.nosql.AuditResult;
 import ru.fds.tavrzauditcollateral.repository.RepositoryAuditLoanAgreement;
@@ -33,7 +34,7 @@ public class LoanAgreementServiceImpl implements ObjectAuditService {
 
     @Override
     @Transactional
-    public void doAuditAboutNewObject(Long id){
+    public void executeAuditAboutNewObject(Long id){
         Collection<AuditResult> auditResults = new ArrayList<>();
         repositoryAuditLoanAgreement.isDateClosedOverDue(id).ifPresent(loanAgreementAuditDateClosed -> {
             AuditResult auditResult = AuditResult.builder()
@@ -41,7 +42,7 @@ public class LoanAgreementServiceImpl implements ObjectAuditService {
                     .typeOfObject(TypeOfObject.LOAN_AGREEMENT)
                     .objectId(loanAgreementAuditDateClosed.getId())
                     .nameOfObject(loanAgreementAuditDateClosed.getNameObject())
-                    .fieldNameWithError("dateEndLA")
+                    .typeOfAudit(TypeOfAuditLoanAgreement.DATE_CLOSED)
                     .valueInField(loanAgreementAuditDateClosed.getWrongValueInField())
                     .auditLevel(AuditLevel.LOW)
                     .descriptionResult("Кредитный договор не закрыт")
@@ -58,7 +59,7 @@ public class LoanAgreementServiceImpl implements ObjectAuditService {
                     .typeOfObject(TypeOfObject.LOAN_AGREEMENT)
                     .objectId(loanAgreementAuditLowCollateralValue.getId())
                     .nameOfObject(loanAgreementAuditLowCollateralValue.getNameObject())
-                    .fieldNameWithError("amountLA")
+                    .typeOfAudit(TypeOfAuditLoanAgreement.AMOUNT_LA)
                     .valueInField(loanAgreementAuditLowCollateralValue.getWrongValueInField())
                     .auditLevel(AuditLevel.LOW)
                     .descriptionResult("Обеспеченность договора ниже кредитной задолженности")
@@ -75,7 +76,7 @@ public class LoanAgreementServiceImpl implements ObjectAuditService {
                     .typeOfObject(TypeOfObject.LOAN_AGREEMENT)
                     .objectId(loanAgreementWithoutPA.getId())
                     .nameOfObject(loanAgreementWithoutPA.getNameObject())
-                    .fieldNameWithError("")
+                    .typeOfAudit(TypeOfAuditLoanAgreement.NOT_EXIST_PA)
                     .valueInField(loanAgreementWithoutPA.getWrongValueInField())
                     .auditLevel(AuditLevel.MEDIUM)
                     .descriptionResult("Отсутствуют договоры залога")
@@ -92,13 +93,14 @@ public class LoanAgreementServiceImpl implements ObjectAuditService {
 
     @Override
     @Transactional
-    public void doAuditAboutExitObject(Long id){
+    public void executeAuditAboutExistObject(Long id){
+
 
     }
 
     @Override
     @Transactional
-    public void doAuditAboutAllObjects(){
+    public void executeAuditAboutAllObjects(){
 
     }
 

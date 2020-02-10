@@ -13,7 +13,7 @@ import java.util.Collection;
 @Service
 public class AuditResultServiceImpl implements AuditResultService {
     @Override
-    public void doAuditInAllObjects() {
+    public void executeAuditInAllObjects() {
 
     }
 

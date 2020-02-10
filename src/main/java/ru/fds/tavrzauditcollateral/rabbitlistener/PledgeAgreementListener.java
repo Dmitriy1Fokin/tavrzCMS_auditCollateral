@@ -21,12 +21,12 @@ public class PledgeAgreementListener {
     @RabbitListener(queues = "${queue_name.audit_new_pledge_agreement}")
     public void auditNewPledgeAgreement(Long pledgeAgreementId){
         log.debug("auditNewPledgeAgreement. pledgeAgreementId: {}", pledgeAgreementId);
-        pledgeAgreementService.doAuditAboutNewObject(pledgeAgreementId);
+        pledgeAgreementService.executeAuditAboutNewObject(pledgeAgreementId);
     }
 
     @RabbitListener(queues = "${queue_name.audit_exist_pledge_agreement}")
     public void auditExistPledgeAgreement(Long pledgeAgreementId){
         log.debug("auditExistPledgeAgreement. pledgeAgreementId: {}", pledgeAgreementId);
-        pledgeAgreementService.doAuditAboutExitObject(pledgeAgreementId);
+        pledgeAgreementService.executeAuditAboutExistObject(pledgeAgreementId);
     }
 }
