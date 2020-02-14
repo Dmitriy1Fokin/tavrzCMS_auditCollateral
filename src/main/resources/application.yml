@@ -1,0 +1,50 @@
+
+
+spring:
+  datasource:
+    driver-class-name: org.postgresql.Driver
+    url: jdbc:postgresql://localhost:5432/tavrzdb
+    username: postgres
+    password: postgres
+  data:
+    mongodb:
+      host: localhost
+      port: 27017
+      database: auditCollateralDB
+  rabbitmq:
+    host: localhost
+  jpa:
+    open-in-view: false
+    properties:
+      hibernate:
+        show_sql: true
+        temp:
+          use_jdbc_metadata_defaults: false
+
+server:
+  port: 9090
+
+logging:
+  level.ru.fds.tavrzauditcollateral: debug
+
+
+queue_name:
+  audit_new_loan_agreement: queue_audit_new_loan_agreement
+  audit_exist_loan_agreement: queue_audit_exist_loan_agreement
+  audit_new_pledge_agreement: queue_audit_new_pledge_agreement
+  audit_exist_pledge_agreement: queue_audit_exist_pledge_agreement
+  audit_new_pledge_subject: queue_audit_new_pledge_subject
+  audit_exist_pledge_subject: queue_audit_exist_pledge_subject
+
+description_audit_result:
+  loan_agreement:
+    date_closed: Кредитный договор не закрыт
+    amount: Обеспеченность договора ниже кредитной задолженности
+    not_exist_pa: Отсутствуют договоры залога
+
+
+audit_advice:
+  loan_agreement:
+    date_closed: Закрыть договор; Изменить дату окончания КД; Присвоить статус - Проблемный
+    amount: Снизить кредитную задолженность; Предоставить дополнитнльгый залог
+    not_exist_pa: Заключить договор залога; Закрыть кредитный договор

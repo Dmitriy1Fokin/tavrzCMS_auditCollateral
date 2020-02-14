@@ -6,6 +6,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import ru.fds.tavrzauditcollateral.dictionary.AuditLevel;
 import ru.fds.tavrzauditcollateral.dictionary.AuditStatus;
+import ru.fds.tavrzauditcollateral.dictionary.TypeOfAudit;
 import ru.fds.tavrzauditcollateral.dictionary.TypeOfObject;
 
 import java.time.LocalDate;
@@ -27,7 +28,7 @@ public class AuditResultDto {
 
     private String nameOfObject;
 
-    private String fieldNameWithError;
+    private TypeOfAudit typeOfAudit;
 
     private String valueInField;
 
