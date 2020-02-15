@@ -44,14 +44,14 @@ public class LoanAgreementServiceImpl implements ObjectAuditService {
     @Transactional
     public void executeAuditAboutNewObject(Long id){
         Collection<AuditResult> auditResults = new ArrayList<>();
-        repositoryAuditLoanAgreement.isDateClosedOverDue(id).ifPresent(loanAgreementAuditDateClosed -> {
+        repositoryAuditLoanAgreement.isDateClosedOverDue(id).ifPresent(objectAudit -> {
             AuditResult auditResult = AuditResult.builder()
                     .date(LocalDate.now())
                     .typeOfObject(TypeOfObject.LOAN_AGREEMENT)
-                    .objectId(loanAgreementAuditDateClosed.getId())
-                    .nameOfObject(loanAgreementAuditDateClosed.getNameObject())
+                    .objectId(objectAudit.getId())
+                    .nameOfObject(objectAudit.getNameObject())
                     .typeOfAudit(TypeOfAudit.LOAN_AGREEMENT_DATE_CLOSED)
-                    .valueInField(loanAgreementAuditDateClosed.getWrongValueInField())
+                    .valueInField(objectAudit.getWrongValueInField())
                     .auditLevel(AuditLevel.LOW)
                     .descriptionResult(descriptionResult.getLoanAgreementDateClosed())
                     .advice(auditAdvice.getLoanAgreementDateClosed())
@@ -61,14 +61,14 @@ public class LoanAgreementServiceImpl implements ObjectAuditService {
             auditResults.add(auditResult);
         });
 
-        repositoryAuditLoanAgreement.isLowCollateralSum(id).ifPresent(loanAgreementAuditLowCollateralValue -> {
+        repositoryAuditLoanAgreement.isLowCollateralSum(id).ifPresent(objectAudit -> {
             AuditResult auditResult = AuditResult.builder()
                     .date(LocalDate.now())
                     .typeOfObject(TypeOfObject.LOAN_AGREEMENT)
-                    .objectId(loanAgreementAuditLowCollateralValue.getId())
-                    .nameOfObject(loanAgreementAuditLowCollateralValue.getNameObject())
+                    .objectId(objectAudit.getId())
+                    .nameOfObject(objectAudit.getNameObject())
                     .typeOfAudit(TypeOfAudit.LOAN_AGREEMENT_AMOUNT_LA)
-                    .valueInField(loanAgreementAuditLowCollateralValue.getWrongValueInField())
+                    .valueInField(objectAudit.getWrongValueInField())
                     .auditLevel(AuditLevel.LOW)
                     .descriptionResult(descriptionResult.getLoanAgreementAmount())
                     .advice(auditAdvice.getLoanAgreementAmount())
@@ -78,14 +78,14 @@ public class LoanAgreementServiceImpl implements ObjectAuditService {
             auditResults.add(auditResult);
         });
 
-        repositoryAuditLoanAgreement.isHaveNotPledgeAgreements(id).ifPresent(loanAgreementWithoutPA -> {
+        repositoryAuditLoanAgreement.isHaveNotPledgeAgreements(id).ifPresent(objectAudit -> {
             AuditResult auditResult = AuditResult.builder()
                     .date(LocalDate.now())
                     .typeOfObject(TypeOfObject.LOAN_AGREEMENT)
-                    .objectId(loanAgreementWithoutPA.getId())
-                    .nameOfObject(loanAgreementWithoutPA.getNameObject())
+                    .objectId(objectAudit.getId())
+                    .nameOfObject(objectAudit.getNameObject())
                     .typeOfAudit(TypeOfAudit.LOAN_AGREEMENT_NOT_EXIST_PA)
-                    .valueInField(loanAgreementWithoutPA.getWrongValueInField())
+                    .valueInField(objectAudit.getWrongValueInField())
                     .auditLevel(AuditLevel.MEDIUM)
                     .descriptionResult(descriptionResult.getLoanAgreementNotExistPA())
                     .advice(auditAdvice.getLoanAgreementNotExistPA())
@@ -105,205 +105,55 @@ public class LoanAgreementServiceImpl implements ObjectAuditService {
         Collection<AuditResult> auditResults = new ArrayList<>();
 
         repositoryAuditLoanAgreement.isDateClosedOverDue(id)
-                .ifPresentOrElse(objectAudit -> {
-                    repositoryAuditResult.getExistAuditResult(TypeOfObject.LOAN_AGREEMENT, objectAudit.getId(), TypeOfAudit.LOAN_AGREEMENT_DATE_CLOSED)
-                            .ifPresentOrElse(auditResult -> {
-                                if(!objectAudit.getWrongValueInField().equals(auditResult.getValueInField())){
-                                    auditResult.setValueInField(objectAudit.getWrongValueInField());
-                                    auditResults.add(auditResult);
-                                }
-                            }, () ->{
-                                AuditResult auditResult = AuditResult.builder()
-                                        .date(LocalDate.now())
-                                        .typeOfObject(TypeOfObject.LOAN_AGREEMENT)
-                                        .objectId(objectAudit.getId())
-                                        .nameOfObject(objectAudit.getNameObject())
-                                        .typeOfAudit(TypeOfAudit.LOAN_AGREEMENT_DATE_CLOSED)
-                                        .valueInField(objectAudit.getWrongValueInField())
-                                        .auditLevel(AuditLevel.LOW)
-                                        .descriptionResult(descriptionResult.getLoanAgreementDateClosed())
-                                        .advice(auditAdvice.getLoanAgreementDateClosed())
-                                        .auditStatus(AuditStatus.ACTUAL)
-                                        .build();
-
-                                auditResults.add(auditResult);
-                            });
-                }, () ->{
-                    repositoryAuditResult.getExistAuditResult(TypeOfObject.LOAN_AGREEMENT, id, TypeOfAudit.LOAN_AGREEMENT_DATE_CLOSED)
-                            .ifPresent(auditResult -> {
-                                auditResult.setAuditStatus(AuditStatus.CLOSED);
-                                auditResults.add(auditResult);
-                            });
-                });
+                .ifPresentOrElse(objectAudit ->
+                        auditResults.add(createAuditResultDateClosed(objectAudit)),
+                        () ->
+                                repositoryAuditResult.getExistAuditResult(TypeOfObject.LOAN_AGREEMENT, id, TypeOfAudit.LOAN_AGREEMENT_DATE_CLOSED)
+                                        .ifPresent(auditResult -> {
+                                            auditResult.setAuditStatus(AuditStatus.CLOSED);
+                                            auditResults.add(auditResult);
+                                            })
+                );
 
         repositoryAuditLoanAgreement.isLowCollateralSum(id)
-                .ifPresentOrElse(objectAudit -> {
-                    repositoryAuditResult.getExistAuditResult(TypeOfObject.LOAN_AGREEMENT, objectAudit.getId(), TypeOfAudit.LOAN_AGREEMENT_AMOUNT_LA)
-                            .ifPresentOrElse(auditResult -> {
-                                if(!objectAudit.getWrongValueInField().equals(auditResult.getValueInField())){
-                                    auditResult.setValueInField(objectAudit.getWrongValueInField());
-                                    auditResults.add(auditResult);
-                                }
-                            }, () -> {
-                                AuditResult auditResult = AuditResult.builder()
-                                        .date(LocalDate.now())
-                                        .typeOfObject(TypeOfObject.LOAN_AGREEMENT)
-                                        .objectId(objectAudit.getId())
-                                        .nameOfObject(objectAudit.getNameObject())
-                                        .typeOfAudit(TypeOfAudit.LOAN_AGREEMENT_AMOUNT_LA)
-                                        .valueInField(objectAudit.getWrongValueInField())
-                                        .auditLevel(AuditLevel.LOW)
-                                        .descriptionResult(descriptionResult.getLoanAgreementAmount())
-                                        .advice(auditAdvice.getLoanAgreementAmount())
-                                        .auditStatus(AuditStatus.ACTUAL)
-                                        .build();
-
-                                auditResults.add(auditResult);
-                            });
-                }, () -> {
-                    repositoryAuditResult.getExistAuditResult(TypeOfObject.LOAN_AGREEMENT, id, TypeOfAudit.LOAN_AGREEMENT_AMOUNT_LA)
-                            .ifPresent(auditResult -> {
-                                auditResult.setAuditStatus(AuditStatus.CLOSED);
-                                auditResults.add(auditResult);
-                            });
-                });
+                .ifPresentOrElse(objectAudit ->
+                        auditResults.add(createAuditResultLowCollateralSum(objectAudit)),
+                        () ->
+                                repositoryAuditResult.getExistAuditResult(TypeOfObject.LOAN_AGREEMENT, id, TypeOfAudit.LOAN_AGREEMENT_AMOUNT_LA)
+                                        .ifPresent(auditResult -> {
+                                            auditResult.setAuditStatus(AuditStatus.CLOSED);
+                                            auditResults.add(auditResult);
+                                            })
+                );
 
         repositoryAuditLoanAgreement.isHaveNotPledgeAgreements(id)
-                .ifPresentOrElse(objectAudit -> {
-                    repositoryAuditResult.getExistAuditResult(TypeOfObject.LOAN_AGREEMENT, objectAudit.getId(), TypeOfAudit.LOAN_AGREEMENT_NOT_EXIST_PA)
-                            .ifPresentOrElse(auditResult -> {
-                                if(!objectAudit.getWrongValueInField().equals(auditResult.getValueInField())){
-                                    auditResult.setValueInField(objectAudit.getWrongValueInField());
-                                    auditResults.add(auditResult);
-                                }
-                            }, () -> {
-                                AuditResult auditResult = AuditResult.builder()
-                                        .date(LocalDate.now())
-                                        .typeOfObject(TypeOfObject.LOAN_AGREEMENT)
-                                        .objectId(objectAudit.getId())
-                                        .nameOfObject(objectAudit.getNameObject())
-                                        .typeOfAudit(TypeOfAudit.LOAN_AGREEMENT_NOT_EXIST_PA)
-                                        .valueInField(objectAudit.getWrongValueInField())
-                                        .auditLevel(AuditLevel.MEDIUM)
-                                        .descriptionResult(descriptionResult.getLoanAgreementNotExistPA())
-                                        .advice(auditAdvice.getLoanAgreementNotExistPA())
-                                        .auditStatus(AuditStatus.ACTUAL)
-                                        .build();
-
-                                auditResults.add(auditResult);
-                            });
-                }, () -> {
-                    repositoryAuditResult.getExistAuditResult(TypeOfObject.LOAN_AGREEMENT, id, TypeOfAudit.LOAN_AGREEMENT_NOT_EXIST_PA)
-                            .ifPresent(auditResult -> {
-                                auditResult.setAuditStatus(AuditStatus.CLOSED);
-                                auditResults.add(auditResult);
-                            });
-                });
+                .ifPresentOrElse(objectAudit ->
+                        auditResults.add(createAuditResultHaveNotPA(objectAudit)),
+                        () ->
+                                repositoryAuditResult.getExistAuditResult(TypeOfObject.LOAN_AGREEMENT, id, TypeOfAudit.LOAN_AGREEMENT_NOT_EXIST_PA)
+                                        .ifPresent(auditResult -> {
+                                            auditResult.setAuditStatus(AuditStatus.CLOSED);
+                                            auditResults.add(auditResult);
+                                        })
+                );
 
         log.debug("executeAuditAboutExistObject. Collection<AuditResult>: {}", auditResults.toString());
         repositoryAuditResult.saveAll(auditResults);
     }
-
-//    private AuditResult checkObjectAuditNotHavePA(ObjectAudit objectAudit){
-//        return repositoryAuditResult.getExistAuditResult(TypeOfObject.LOAN_AGREEMENT, objectAudit.getId(), TypeOfAudit.LOAN_AGREEMENT_NOT_EXIST_PA)
-//                .map(auditResult -> {
-//                    if(!objectAudit.getWrongValueInField().equals(auditResult.getValueInField())) {
-//                        auditResult.setValueInField(objectAudit.getWrongValueInField());
-//                    }
-//                    return auditResult;
-//                }).orElse(AuditResult.builder()
-//                        .date(LocalDate.now())
-//                        .typeOfObject(TypeOfObject.LOAN_AGREEMENT)
-//                        .objectId(objectAudit.getId())
-//                        .nameOfObject(objectAudit.getNameObject())
-//                        .typeOfAudit(TypeOfAudit.LOAN_AGREEMENT_NOT_EXIST_PA)
-//                        .valueInField(objectAudit.getWrongValueInField())
-//                        .auditLevel(AuditLevel.MEDIUM)
-//                        .descriptionResult(descriptionResult.getLoanAgreementNotExistPA())
-//                        .advice(auditAdvice.getLoanAgreementNotExistPA())
-//                        .auditStatus(AuditStatus.ACTUAL)
-//                        .build());
-//    }
 
     @Override
     @Transactional
     public void executeAuditAboutAllObjects(){
         Collection<AuditResult> auditResults = new ArrayList<>();
 
-        repositoryAuditLoanAgreement.getLoanAgreementWithDateClosedOverdue().forEach(objectAudit -> {
-            repositoryAuditResult.getExistAuditResult(TypeOfObject.LOAN_AGREEMENT, objectAudit.getId(), TypeOfAudit.LOAN_AGREEMENT_DATE_CLOSED)
-                    .ifPresentOrElse(auditResult -> {
-                        if(!objectAudit.getWrongValueInField().equals(auditResult.getValueInField())){
-                            auditResult.setValueInField(objectAudit.getWrongValueInField());
-                            auditResults.add(auditResult);
-                        }
-                    }, () ->{
-                        AuditResult auditResult = AuditResult.builder()
-                                .date(LocalDate.now())
-                                .typeOfObject(TypeOfObject.LOAN_AGREEMENT)
-                                .objectId(objectAudit.getId())
-                                .nameOfObject(objectAudit.getNameObject())
-                                .typeOfAudit(TypeOfAudit.LOAN_AGREEMENT_DATE_CLOSED)
-                                .valueInField(objectAudit.getWrongValueInField())
-                                .auditLevel(AuditLevel.LOW)
-                                .descriptionResult(descriptionResult.getLoanAgreementDateClosed())
-                                .advice(auditAdvice.getLoanAgreementDateClosed())
-                                .auditStatus(AuditStatus.ACTUAL)
-                                .build();
+        repositoryAuditLoanAgreement.getLoanAgreementWithDateClosedOverdue().forEach(objectAudit ->
+            auditResults.add(createAuditResultDateClosed(objectAudit)));
 
-                        auditResults.add(auditResult);
-                    });
-        });
+        repositoryAuditLoanAgreement.getLoanAgreementWithLowCollateralValue().forEach(objectAudit ->
+            auditResults.add(createAuditResultLowCollateralSum(objectAudit)));
 
-        repositoryAuditLoanAgreement.getLoanAgreementWithLowCollateralValue().forEach(objectAudit -> {
-            repositoryAuditResult.getExistAuditResult(TypeOfObject.LOAN_AGREEMENT, objectAudit.getId(), TypeOfAudit.LOAN_AGREEMENT_AMOUNT_LA)
-                    .ifPresentOrElse(auditResult -> {
-                        if(!objectAudit.getWrongValueInField().equals(auditResult.getValueInField())){
-                            auditResult.setValueInField(objectAudit.getWrongValueInField());
-                            auditResults.add(auditResult);
-                        }
-                    }, () -> {
-                        AuditResult auditResult = AuditResult.builder()
-                                .date(LocalDate.now())
-                                .typeOfObject(TypeOfObject.LOAN_AGREEMENT)
-                                .objectId(objectAudit.getId())
-                                .nameOfObject(objectAudit.getNameObject())
-                                .typeOfAudit(TypeOfAudit.LOAN_AGREEMENT_AMOUNT_LA)
-                                .valueInField(objectAudit.getWrongValueInField())
-                                .auditLevel(AuditLevel.LOW)
-                                .descriptionResult(descriptionResult.getLoanAgreementAmount())
-                                .advice(auditAdvice.getLoanAgreementAmount())
-                                .auditStatus(AuditStatus.ACTUAL)
-                                .build();
-
-                        auditResults.add(auditResult);
-                    });
-        });
-
-        repositoryAuditLoanAgreement.getLoanAgreementWithoutPledge().forEach(objectAudit -> {
-            repositoryAuditResult.getExistAuditResult(TypeOfObject.LOAN_AGREEMENT, objectAudit.getId(), TypeOfAudit.LOAN_AGREEMENT_NOT_EXIST_PA)
-                    .ifPresentOrElse(auditResult -> {
-                        if(!objectAudit.getWrongValueInField().equals(auditResult.getValueInField())){
-                            auditResult.setValueInField(objectAudit.getWrongValueInField());
-                            auditResults.add(auditResult);
-                        }
-                    }, () -> {
-                        AuditResult auditResult = AuditResult.builder()
-                                .date(LocalDate.now())
-                                .typeOfObject(TypeOfObject.LOAN_AGREEMENT)
-                                .objectId(objectAudit.getId())
-                                .nameOfObject(objectAudit.getNameObject())
-                                .typeOfAudit(TypeOfAudit.LOAN_AGREEMENT_NOT_EXIST_PA)
-                                .valueInField(objectAudit.getWrongValueInField())
-                                .auditLevel(AuditLevel.MEDIUM)
-                                .descriptionResult(descriptionResult.getLoanAgreementNotExistPA())
-                                .advice(auditAdvice.getLoanAgreementNotExistPA())
-                                .auditStatus(AuditStatus.ACTUAL)
-                                .build();
-
-                        auditResults.add(auditResult);
-                    });
-        });
+        repositoryAuditLoanAgreement.getLoanAgreementWithoutPledge().forEach(objectAudit ->
+            auditResults.add(createAuditResultHaveNotPA(objectAudit)));
 
         log.debug("executeAuditAboutAllObjects. Collection<AuditResult>: {}", auditResults.toString());
         repositoryAuditResult.saveAll(auditResults);
@@ -317,5 +167,68 @@ public class LoanAgreementServiceImpl implements ObjectAuditService {
     @Override
     public Collection<AuditResult> getAuditResultsAboutObject(Long id, AuditStatus auditStatus){
         return repositoryAuditResult.getExistAuditResults(TypeOfObject.LOAN_AGREEMENT, id, auditStatus);
+    }
+
+    private AuditResult createAuditResultDateClosed(ObjectAudit objectAudit){
+        return repositoryAuditResult.getExistAuditResult(TypeOfObject.LOAN_AGREEMENT, objectAudit.getId(), TypeOfAudit.LOAN_AGREEMENT_DATE_CLOSED)
+                .map(auditResult -> {
+                    if(!objectAudit.getWrongValueInField().equals(auditResult.getValueInField())){
+                        auditResult.setValueInField(objectAudit.getWrongValueInField());
+                    }
+                    return auditResult;
+                }).orElse(AuditResult.builder()
+                            .date(LocalDate.now())
+                            .typeOfObject(TypeOfObject.LOAN_AGREEMENT)
+                            .objectId(objectAudit.getId())
+                            .nameOfObject(objectAudit.getNameObject())
+                            .typeOfAudit(TypeOfAudit.LOAN_AGREEMENT_DATE_CLOSED)
+                            .valueInField(objectAudit.getWrongValueInField())
+                            .auditLevel(AuditLevel.LOW)
+                            .descriptionResult(descriptionResult.getLoanAgreementDateClosed())
+                            .advice(auditAdvice.getLoanAgreementDateClosed())
+                            .auditStatus(AuditStatus.ACTUAL)
+                            .build());
+    }
+
+    private AuditResult createAuditResultLowCollateralSum(ObjectAudit objectAudit){
+        return repositoryAuditResult.getExistAuditResult(TypeOfObject.LOAN_AGREEMENT, objectAudit.getId(), TypeOfAudit.LOAN_AGREEMENT_AMOUNT_LA)
+                .map(auditResult -> {
+                    if(!objectAudit.getWrongValueInField().equals(auditResult.getValueInField())){
+                        auditResult.setValueInField(objectAudit.getWrongValueInField());
+                    }
+                    return auditResult;
+                }).orElse(AuditResult.builder()
+                            .date(LocalDate.now())
+                            .typeOfObject(TypeOfObject.LOAN_AGREEMENT)
+                            .objectId(objectAudit.getId())
+                            .nameOfObject(objectAudit.getNameObject())
+                            .typeOfAudit(TypeOfAudit.LOAN_AGREEMENT_AMOUNT_LA)
+                            .valueInField(objectAudit.getWrongValueInField())
+                            .auditLevel(AuditLevel.LOW)
+                            .descriptionResult(descriptionResult.getLoanAgreementAmount())
+                            .advice(auditAdvice.getLoanAgreementAmount())
+                            .auditStatus(AuditStatus.ACTUAL)
+                            .build());
+    }
+
+    private AuditResult createAuditResultHaveNotPA(ObjectAudit objectAudit){
+        return repositoryAuditResult.getExistAuditResult(TypeOfObject.LOAN_AGREEMENT, objectAudit.getId(), TypeOfAudit.LOAN_AGREEMENT_NOT_EXIST_PA)
+                .map(auditResult -> {
+                    if(!objectAudit.getWrongValueInField().equals(auditResult.getValueInField())) {
+                        auditResult.setValueInField(objectAudit.getWrongValueInField());
+                    }
+                    return auditResult;
+                }).orElse(AuditResult.builder()
+                        .date(LocalDate.now())
+                        .typeOfObject(TypeOfObject.LOAN_AGREEMENT)
+                        .objectId(objectAudit.getId())
+                        .nameOfObject(objectAudit.getNameObject())
+                        .typeOfAudit(TypeOfAudit.LOAN_AGREEMENT_NOT_EXIST_PA)
+                        .valueInField(objectAudit.getWrongValueInField())
+                        .auditLevel(AuditLevel.MEDIUM)
+                        .descriptionResult(descriptionResult.getLoanAgreementNotExistPA())
+                        .advice(auditAdvice.getLoanAgreementNotExistPA())
+                        .auditStatus(AuditStatus.ACTUAL)
+                        .build());
     }
 }
