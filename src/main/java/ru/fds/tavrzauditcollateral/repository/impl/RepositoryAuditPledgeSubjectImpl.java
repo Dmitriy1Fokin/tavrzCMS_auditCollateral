@@ -235,7 +235,7 @@ public class RepositoryAuditPledgeSubjectImpl implements RepositoryAuditPledgeSu
     }
 
     @Override
-    public Collection<ObjectAudit> getPledgeSubjectsWithZeroZzZz() {
+    public Collection<ObjectAudit> getPledgeSubjectsWithZeroZsZz() {
         return template.query(QUERY_PS_WITH_ZERO_ZSZZ, pledgeSubjectAuditCostWrapper);
     }
 

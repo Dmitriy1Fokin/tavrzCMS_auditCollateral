@@ -4,7 +4,12 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import ru.fds.tavrzauditcollateral.dictionary.*;
+import ru.fds.tavrzauditcollateral.dictionary.AuditAdvice;
+import ru.fds.tavrzauditcollateral.dictionary.AuditLevel;
+import ru.fds.tavrzauditcollateral.dictionary.AuditStatus;
+import ru.fds.tavrzauditcollateral.dictionary.DescriptionResult;
+import ru.fds.tavrzauditcollateral.dictionary.TypeOfAudit;
+import ru.fds.tavrzauditcollateral.dictionary.TypeOfObject;
 import ru.fds.tavrzauditcollateral.domain.nosql.AuditResult;
 import ru.fds.tavrzauditcollateral.domain.sql.ObjectAudit;
 import ru.fds.tavrzauditcollateral.repository.RepositoryAuditPledgeAgreement;
@@ -25,7 +30,10 @@ public class PledgeAgreementServiceImpl implements ObjectAuditService {
     private final DescriptionResult descriptionResult;
     private final AuditAdvice auditAdvice;
 
-    public PledgeAgreementServiceImpl(RepositoryAuditPledgeAgreement repositoryAuditPledgeAgreement, RepositoryAuditResult repositoryAuditResult, DescriptionResult descriptionResult, AuditAdvice auditAdvice) {
+    public PledgeAgreementServiceImpl(RepositoryAuditPledgeAgreement repositoryAuditPledgeAgreement,
+                                      RepositoryAuditResult repositoryAuditResult,
+                                      DescriptionResult descriptionResult,
+                                      AuditAdvice auditAdvice) {
         this.repositoryAuditPledgeAgreement = repositoryAuditPledgeAgreement;
         this.repositoryAuditResult = repositoryAuditResult;
         this.descriptionResult = descriptionResult;

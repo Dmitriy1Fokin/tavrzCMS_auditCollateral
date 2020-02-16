@@ -10,7 +10,7 @@ public interface RepositoryAuditPledgeSubject {
     Optional<ObjectAudit> isHaveLowLiquidityAndNotZeroSS(Long pledgeSubjectId);
     Collection<ObjectAudit> getPledgeSubjectsWithZeroZsDz();
     Optional<ObjectAudit> isHaveZeroZsDz(Long pledgeSubjectId);
-    Collection<ObjectAudit> getPledgeSubjectsWithZeroZzZz();
+    Collection<ObjectAudit> getPledgeSubjectsWithZeroZsZz();
     Optional<ObjectAudit> isHaveZeroZsZz(Long pledgeSubjectId);
     Collection<ObjectAudit> getPledgeSubjectsWithZeroRsDz();
     Optional<ObjectAudit> isHaveZeroRsDz(Long pledgeSubjectId);
