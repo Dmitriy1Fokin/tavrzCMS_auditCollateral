@@ -54,7 +54,7 @@ public class AuditResultController {
 
     @GetMapping()
     public Collection<AuditResultDto> getAuditResult(Pageable pageable){
-        return auditResultConverter.toDto(auditResultService.getAllAuditResults(pageable));
+        return auditResultConverter.toDto(auditResultService.getAllAuditResults(pageable).getContent());
     }
 
     @PutMapping("/ignore")
