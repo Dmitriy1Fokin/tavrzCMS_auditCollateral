@@ -36,6 +36,9 @@ eureka:
 logging:
   level.ru.fds.tavrzauditcollateral: debug
 
+#start scheduler in every sunday in 03:00:00 A.M.
+cron:
+  expression: 0 0 3 ? * SUN
 
 queue_name:
   audit_new_loan_agreement: queue_audit_new_loan_agreement
