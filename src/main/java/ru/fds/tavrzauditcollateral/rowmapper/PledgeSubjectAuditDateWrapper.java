@@ -15,7 +15,7 @@ public class PledgeSubjectAuditDateWrapper implements RowMapper<ObjectAudit> {
         return ObjectAuditImpl.builder()
                 .id(rs.getLong(1))
                 .name(rs.getString(2))
-                .valueInField(rs.getDate(2).toString())
+                .valueInField(rs.getDate(3).toString())
                 .build();
     }
 }

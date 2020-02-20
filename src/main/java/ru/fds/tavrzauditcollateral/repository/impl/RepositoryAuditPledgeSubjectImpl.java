@@ -36,7 +36,7 @@ public class RepositoryAuditPledgeSubjectImpl implements RepositoryAuditPledgeSu
                                                             "join dz_ps dp on ps.pledge_subject_id = dp.pledge_subject_id\n " +
                                                             "join dz d on dp.dz_id = d.dz_id\n" +
                                                             "where d.status = 'открыт'\n" +
-                                                            "and ps.zs_dz = :pledgeSubjectId";
+                                                            "and ps.zs_dz = 0";
     private static final String QUERY_IS_ZERO_ZSDZ = "select ps.pledge_subject_id, ps.name, ps.zs_dz\n" +
                                                         "from pledge_subject ps\n  " +
                                                         "where ps.zs_dz = 0\n" +
