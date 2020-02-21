@@ -106,7 +106,7 @@ public class RepositoryAuditPledgeSubjectImpl implements RepositoryAuditPledgeSu
     private static final String QUERY_IS_CONCLUSION_OVERDUE = "select ps.pledge_subject_id, ps.name, ps.date_conclusion\n" +
                                                                 "from pledge_subject ps\n" +
                                                                 "where ps.date_conclusion < now() - '1 year'::interval\n" +
-                                                                "and ps.pledge_subject_id = 4";
+                                                                "and ps.pledge_subject_id = :pledgeSubjectId";
 
     private static final String QUERY_PS_LOSING = "select ps.pledge_subject_id, ps.name, ps.status_monitoring\n" +
                                                     "from pledge_subject ps\n" +
@@ -327,26 +327,26 @@ public class RepositoryAuditPledgeSubjectImpl implements RepositoryAuditPledgeSu
 
     @Override
     public Collection<ObjectAudit> getPledgeSubjectWithoutInsurance() {
-        return template.query(QUERY_PS_WITHOUT_ENCUMBRANCE, pledgeSubjectAuditTextWrapper);
+        return template.query(QUERY_PS_WITHOUT_INSURANCE, pledgeSubjectAuditTextWrapper);
     }
 
     @Override
     public Optional<ObjectAudit> isHaveNotInsurance(Long pledgeSubjectId) {
         SqlParameterSource parameterSource = new MapSqlParameterSource().addValue(PARAM_PS_ID, pledgeSubjectId);
-        return Optional.ofNullable(DataAccessUtils.singleResult(template.query(QUERY_IS_HAVE_NOT_ENCUMBRANCE,
+        return Optional.ofNullable(DataAccessUtils.singleResult(template.query(QUERY_IS_HAVE_NOT_INSURANCE,
                 parameterSource,
                 pledgeSubjectAuditTextWrapper)));
     }
 
     @Override
     public Collection<ObjectAudit> getPledgeSubjectWithoutOurEncumbrance() {
-        return template.query(QUERY_PS_WITHOUT_INSURANCE, pledgeSubjectAuditTextWrapper);
+        return template.query(QUERY_PS_WITHOUT_ENCUMBRANCE, pledgeSubjectAuditTextWrapper);
     }
 
     @Override
     public Optional<ObjectAudit> isHaveNotOurEncumbrance(Long pledgeSubjectId) {
         SqlParameterSource parameterSource = new MapSqlParameterSource().addValue(PARAM_PS_ID, pledgeSubjectId);
-        return Optional.ofNullable(DataAccessUtils.singleResult(template.query(QUERY_IS_HAVE_NOT_INSURANCE,
+        return Optional.ofNullable(DataAccessUtils.singleResult(template.query(QUERY_IS_HAVE_NOT_ENCUMBRANCE,
                 parameterSource,
                 pledgeSubjectAuditTextWrapper)));
     }

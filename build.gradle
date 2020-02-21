@@ -36,6 +36,7 @@ dependencies {
     }
     testImplementation 'org.springframework.amqp:spring-rabbit-test'
     testImplementation 'org.springframework.security:spring-security-test'
+    testImplementation group: 'junit', name: 'junit', version: '4.12'
 }
 
 test {
