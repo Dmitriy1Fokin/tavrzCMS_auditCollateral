@@ -10,6 +10,7 @@ import ru.fds.tavrzauditcollateral.repository.RepositoryAuditPledgeSubject;
 import ru.fds.tavrzauditcollateral.rowmapper.PledgeSubjectAuditCostWrapper;
 import ru.fds.tavrzauditcollateral.rowmapper.PledgeSubjectAuditDateWrapper;
 import ru.fds.tavrzauditcollateral.rowmapper.PledgeSubjectAuditTextWrapper;
+import ru.fds.tavrzauditcollateral.utils.DateUtils;
 
 import java.util.Collection;
 import java.util.Optional;
@@ -18,6 +19,8 @@ import java.util.Optional;
 public class RepositoryAuditPledgeSubjectImpl implements RepositoryAuditPledgeSubject {
 
     private static final String PARAM_PS_ID = "pledgeSubjectId";
+    private static final String PARAM_DATE_NOW = "dateNow";
+    private static final String PARAM_DATE_OVERDUE = "dateOverdue";
     private static final String QUERY_PS_WITH_LOW_LIQUIDITY_AND_NOT_ZERO_SS = "select ps.pledge_subject_id, ps.name, ps.ss\n  " +
                                                                                 "from pledge_subject ps\n " +
                                                                                 "join dz_ps dp on ps.pledge_subject_id = dp.pledge_subject_id\n " +
@@ -91,10 +94,10 @@ public class RepositoryAuditPledgeSubjectImpl implements RepositoryAuditPledgeSu
                                                                     "join dz_ps dp on ps.pledge_subject_id = dp.pledge_subject_id  \n" +
                                                                     "join dz d on dp.dz_id = d.dz_id\n" +
                                                                     "where d.status = 'открыт'\n" +
-                                                                    "and ps.date_monitoring < now() - '1 year'::interval";
+                                                                    "and ps.date_monitoring < :dateOverdue";
     private static final String QUERY_IS_MONITORING_OVERDUE = "select ps.pledge_subject_id, ps.name, ps.date_monitoring\n" +
                                                                 "from pledge_subject ps\n" +
-                                                                "where ps.date_monitoring < now() - '1 year'::interval\n" +
+                                                                "where ps.date_monitoring < :dateOverdue\n" +
                                                                 "and ps.pledge_subject_id = :pledgeSubjectId   ";
 
     private static final String QUERY_PS_WITH_CONCLUSION_OVERDUE = "select ps.pledge_subject_id, ps.name, ps.date_conclusion\n" +
@@ -102,10 +105,10 @@ public class RepositoryAuditPledgeSubjectImpl implements RepositoryAuditPledgeSu
                                                                     "join dz_ps dp on ps.pledge_subject_id = dp.pledge_subject_id  \n" +
                                                                     "join dz d on dp.dz_id = d.dz_id\n" +
                                                                     "where d.status = 'открыт'\n" +
-                                                                    "and ps.date_conclusion < now() - '1 year'::interval";
+                                                                    "and ps.date_conclusion < :dateOverdue";
     private static final String QUERY_IS_CONCLUSION_OVERDUE = "select ps.pledge_subject_id, ps.name, ps.date_conclusion\n" +
                                                                 "from pledge_subject ps\n" +
-                                                                "where ps.date_conclusion < now() - '1 year'::interval\n" +
+                                                                "where ps.date_conclusion < :dateOverdue\n" +
                                                                 "and ps.pledge_subject_id = :pledgeSubjectId";
 
     private static final String QUERY_PS_LOSING = "select ps.pledge_subject_id, ps.name, ps.status_monitoring\n" +
@@ -170,12 +173,12 @@ public class RepositoryAuditPledgeSubjectImpl implements RepositoryAuditPledgeSu
                                                                     "join dz d on dp.dz_id = d.dz_id\n" +
                                                                     "where d.status = 'открыт'\n" +
                                                                     "and ps.insurance_obligation = 'да'\n" +
-                                                                    "and i.date_end < now()";
+                                                                    "and i.date_end < :dateNow";
     private static final String QUERY_IS_INSURANCE_OVERDUE = "select ps.pledge_subject_id, ps.name, i.date_end\n" +
                                                                 "from pledge_subject ps\n" +
                                                                 "join insurance i on ps.pledge_subject_id = i.pledgesubject_id\n" +
                                                                 "where ps.insurance_obligation = 'да'\n" +
-                                                                "and i.date_end < now()\n" +
+                                                                "and i.date_end < :dateNow\n" +
                                                                 "and ps.pledge_subject_id =  :pledgeSubjectId";
 
     private static final String QUERY_PS_WITH_ENCUMBRANCE_OVERDUE = "select ps.pledge_subject_id, ps.name, e.date_end\n" +
@@ -185,11 +188,11 @@ public class RepositoryAuditPledgeSubjectImpl implements RepositoryAuditPledgeSu
                                                                     "join dz d on dp.dz_id = d.dz_id\n" +
                                                                     "where d.status = 'открыт'\n" +
                                                                     "and e.type_of_encumbrance = 'залог'\n" +
-                                                                    "and e.date_end < now()";
+                                                                    "and e.date_end < :dateNow";
     private static final String QUERY_IS_ENCUMBRANCE_OVERDUE = "select ps.pledge_subject_id, ps.name, e.date_end\n" +
                                                                 "from pledge_subject ps\n" +
                                                                 "join encumbrance e on ps.pledge_subject_id = e.pledgesubject_id\n " +
-                                                                "where e.date_end < now()\n" +
+                                                                "where e.date_end < :dateNow\n" +
                                                                 "and e.type_of_encumbrance = 'залог'\n" +
                                                                 "and ps.pledge_subject_id = :pledgeSubjectId";
 
@@ -197,15 +200,18 @@ public class RepositoryAuditPledgeSubjectImpl implements RepositoryAuditPledgeSu
     private final PledgeSubjectAuditCostWrapper pledgeSubjectAuditCostWrapper;
     private final PledgeSubjectAuditDateWrapper pledgeSubjectAuditDateWrapper;
     private final PledgeSubjectAuditTextWrapper pledgeSubjectAuditTextWrapper;
+    private final DateUtils dateUtils;
 
     public RepositoryAuditPledgeSubjectImpl(NamedParameterJdbcTemplate template,
                                             PledgeSubjectAuditCostWrapper pledgeSubjectAuditCostWrapper,
                                             PledgeSubjectAuditDateWrapper pledgeSubjectAuditDateWrapper,
-                                            PledgeSubjectAuditTextWrapper pledgeSubjectAuditTextWrapper) {
+                                            PledgeSubjectAuditTextWrapper pledgeSubjectAuditTextWrapper,
+                                            DateUtils dateUtils) {
         this.template = template;
         this.pledgeSubjectAuditCostWrapper = pledgeSubjectAuditCostWrapper;
         this.pledgeSubjectAuditDateWrapper = pledgeSubjectAuditDateWrapper;
         this.pledgeSubjectAuditTextWrapper = pledgeSubjectAuditTextWrapper;
+        this.dateUtils = dateUtils;
     }
 
     @Override
@@ -288,12 +294,16 @@ public class RepositoryAuditPledgeSubjectImpl implements RepositoryAuditPledgeSu
 
     @Override
     public Collection<ObjectAudit> getPledgeSubjectsWithMonitoringOverdue() {
-        return template.query(QUERY_PS_WITH_MONITORING_OVERDUE, pledgeSubjectAuditDateWrapper);
+        SqlParameterSource parameterSource = new MapSqlParameterSource()
+                .addValue(PARAM_DATE_OVERDUE, dateUtils.getMinusOneYearFromNow());
+        return template.query(QUERY_PS_WITH_MONITORING_OVERDUE, parameterSource, pledgeSubjectAuditDateWrapper);
     }
 
     @Override
     public Optional<ObjectAudit> isMonitoringOverdue(Long pledgeSubjectId) {
-        SqlParameterSource parameterSource = new MapSqlParameterSource().addValue(PARAM_PS_ID, pledgeSubjectId);
+        SqlParameterSource parameterSource = new MapSqlParameterSource()
+                .addValue(PARAM_PS_ID, pledgeSubjectId)
+                .addValue(PARAM_DATE_OVERDUE, dateUtils.getMinusOneYearFromNow());
         return Optional.ofNullable(DataAccessUtils.singleResult(template.query(QUERY_IS_MONITORING_OVERDUE,
                 parameterSource,
                 pledgeSubjectAuditDateWrapper)));
@@ -301,12 +311,16 @@ public class RepositoryAuditPledgeSubjectImpl implements RepositoryAuditPledgeSu
 
     @Override
     public Collection<ObjectAudit> getPledgeSubjectsWithConclusionOverdue() {
-        return template.query(QUERY_PS_WITH_CONCLUSION_OVERDUE, pledgeSubjectAuditDateWrapper);
+        SqlParameterSource parameterSource = new MapSqlParameterSource()
+                .addValue(PARAM_DATE_OVERDUE, dateUtils.getMinusOneYearFromNow());
+        return template.query(QUERY_PS_WITH_CONCLUSION_OVERDUE, parameterSource, pledgeSubjectAuditDateWrapper);
     }
 
     @Override
     public Optional<ObjectAudit> isConclusionOverdue(Long pledgeSubjectId) {
-        SqlParameterSource parameterSource = new MapSqlParameterSource().addValue(PARAM_PS_ID, pledgeSubjectId);
+        SqlParameterSource parameterSource = new MapSqlParameterSource()
+                .addValue(PARAM_PS_ID, pledgeSubjectId)
+                .addValue(PARAM_DATE_OVERDUE, dateUtils.getMinusOneYearFromNow());
         return Optional.ofNullable(DataAccessUtils.singleResult(template.query(QUERY_IS_CONCLUSION_OVERDUE,
                 parameterSource,
                 pledgeSubjectAuditDateWrapper)));
@@ -366,12 +380,15 @@ public class RepositoryAuditPledgeSubjectImpl implements RepositoryAuditPledgeSu
 
     @Override
     public Collection<ObjectAudit> getPledgeSubjectsWithEncumbranceOverdue() {
-        return template.query(QUERY_PS_WITH_ENCUMBRANCE_OVERDUE, pledgeSubjectAuditDateWrapper);
+        SqlParameterSource parameterSource = new MapSqlParameterSource().addValue(PARAM_DATE_NOW, dateUtils.getNow());
+        return template.query(QUERY_PS_WITH_ENCUMBRANCE_OVERDUE, parameterSource, pledgeSubjectAuditDateWrapper);
     }
 
     @Override
     public Optional<ObjectAudit> isEncumbranceOverdue(Long pledgeSubjectId) {
-        SqlParameterSource parameterSource = new MapSqlParameterSource().addValue(PARAM_PS_ID, pledgeSubjectId);
+        SqlParameterSource parameterSource = new MapSqlParameterSource()
+                .addValue(PARAM_PS_ID, pledgeSubjectId)
+                .addValue(PARAM_DATE_NOW, dateUtils.getNow());
         return Optional.ofNullable(DataAccessUtils.singleResult(template.query(QUERY_IS_ENCUMBRANCE_OVERDUE,
                 parameterSource,
                 pledgeSubjectAuditDateWrapper)));
@@ -379,12 +396,15 @@ public class RepositoryAuditPledgeSubjectImpl implements RepositoryAuditPledgeSu
 
     @Override
     public Collection<ObjectAudit> getPledgeSubjectsWithInsuranceOverdue() {
-        return template.query(QUERY_PS_WITH_INSURANCE_OVERDUE, pledgeSubjectAuditDateWrapper);
+        SqlParameterSource parameterSource = new MapSqlParameterSource().addValue(PARAM_DATE_NOW, dateUtils.getNow());
+        return template.query(QUERY_PS_WITH_INSURANCE_OVERDUE, parameterSource, pledgeSubjectAuditDateWrapper);
     }
 
     @Override
     public Optional<ObjectAudit> isInsuranceOverdue(Long pledgeSubjectId) {
-        SqlParameterSource parameterSource = new MapSqlParameterSource().addValue(PARAM_PS_ID, pledgeSubjectId);
+        SqlParameterSource parameterSource = new MapSqlParameterSource()
+                .addValue(PARAM_PS_ID, pledgeSubjectId)
+                .addValue(PARAM_DATE_NOW, dateUtils.getNow());
         return Optional.ofNullable(DataAccessUtils.singleResult(template.query(QUERY_IS_INSURANCE_OVERDUE,
                 parameterSource,
                 pledgeSubjectAuditDateWrapper)));

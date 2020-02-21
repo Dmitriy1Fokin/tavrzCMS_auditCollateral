@@ -3,12 +3,16 @@ package ru.fds.tavrzauditcollateral.repository.impl;
 import org.junit.Before;
 import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
+import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.junit4.SpringRunner;
 import ru.fds.tavrzauditcollateral.domain.sql.ObjectAudit;
 import ru.fds.tavrzauditcollateral.repository.RepositoryAuditPledgeSubject;
+import ru.fds.tavrzauditcollateral.utils.DateUtils;
 
+import java.time.LocalDate;
 import java.util.Collection;
 import java.util.Optional;
 
@@ -23,6 +27,8 @@ class RepositoryAuditPledgeSubjectImplTest {
 
     @Autowired
     RepositoryAuditPledgeSubject repositoryAuditPledgeSubject;
+    @MockBean
+    DateUtils dateUtils;
 
     @Before
     public void setUp() {
@@ -105,12 +111,14 @@ class RepositoryAuditPledgeSubjectImplTest {
 
     @Test
     void getPledgeSubjectsWithMonitoringOverdue() {
+        Mockito.when(dateUtils.getMinusOneYearFromNow()).thenReturn(LocalDate.of(2019, 2, 21));
         Collection<ObjectAudit> auditResults = repositoryAuditPledgeSubject.getPledgeSubjectsWithMonitoringOverdue();
-        assertEquals(16299, auditResults.size());
+        assertEquals(16279, auditResults.size());
     }
 
     @Test
     void isMonitoringOverdue() {
+        Mockito.when(dateUtils.getMinusOneYearFromNow()).thenReturn(LocalDate.of(2019, 2, 21));
         Optional<ObjectAudit> objectAuditNotExist = repositoryAuditPledgeSubject.isMonitoringOverdue(1L);
         Optional<ObjectAudit> objectAuditExist = repositoryAuditPledgeSubject.isMonitoringOverdue(2L);
 
@@ -120,12 +128,14 @@ class RepositoryAuditPledgeSubjectImplTest {
 
     @Test
     void getPledgeSubjectsWithConclusionOverdue() {
+        Mockito.when(dateUtils.getMinusOneYearFromNow()).thenReturn(LocalDate.of(2019, 2, 21));
         Collection<ObjectAudit> auditResults = repositoryAuditPledgeSubject.getPledgeSubjectsWithConclusionOverdue();
-        assertEquals(16214, auditResults.size());
+        assertEquals(16191, auditResults.size());
     }
 
     @Test
     void isConclusionOverdue() {
+        Mockito.when(dateUtils.getMinusOneYearFromNow()).thenReturn(LocalDate.of(2019, 2, 21));
         Optional<ObjectAudit> objectAuditNotExist = repositoryAuditPledgeSubject.isConclusionOverdue(6L);
         Optional<ObjectAudit> objectAuditExist = repositoryAuditPledgeSubject.isConclusionOverdue(1L);
 
@@ -186,12 +196,14 @@ class RepositoryAuditPledgeSubjectImplTest {
 
     @Test
     void getPledgeSubjectsWithEncumbranceOverdue() {
+        Mockito.when(dateUtils.getNow()).thenReturn(LocalDate.of(2020, 2, 21));
         Collection<ObjectAudit> auditResults = repositoryAuditPledgeSubject.getPledgeSubjectsWithEncumbranceOverdue();
-        assertEquals(593, auditResults.size());
+        assertEquals(565, auditResults.size());
     }
 
     @Test
     void isEncumbranceOverdue() {
+        Mockito.when(dateUtils.getNow()).thenReturn(LocalDate.of(2020, 2, 21));
         Optional<ObjectAudit> objectAuditNotExist = repositoryAuditPledgeSubject.isEncumbranceOverdue(1L);
         Optional<ObjectAudit> objectAuditExist = repositoryAuditPledgeSubject.isEncumbranceOverdue(23L);
 
@@ -201,12 +213,14 @@ class RepositoryAuditPledgeSubjectImplTest {
 
     @Test
     void getPledgeSubjectsWithInsuranceOverdue() {
+        Mockito.when(dateUtils.getNow()).thenReturn(LocalDate.of(2020, 2, 21));
         Collection<ObjectAudit> auditResults = repositoryAuditPledgeSubject.getPledgeSubjectsWithInsuranceOverdue();
-        assertEquals(306, auditResults.size());
+        assertEquals(295, auditResults.size());
     }
 
     @Test
     void isInsuranceOverdue() {
+        Mockito.when(dateUtils.getNow()).thenReturn(LocalDate.of(2020, 2, 21));
         Optional<ObjectAudit> objectAuditNotExist = repositoryAuditPledgeSubject.isInsuranceOverdue(1L);
         Optional<ObjectAudit> objectAuditExist = repositoryAuditPledgeSubject.isInsuranceOverdue(104L);
 

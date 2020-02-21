@@ -3,12 +3,16 @@ package ru.fds.tavrzauditcollateral.repository.impl;
 import org.junit.Before;
 import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
+import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.junit4.SpringRunner;
 import ru.fds.tavrzauditcollateral.domain.sql.ObjectAudit;
 import ru.fds.tavrzauditcollateral.repository.RepositoryAuditLoanAgreement;
+import ru.fds.tavrzauditcollateral.utils.DateUtils;
 
+import java.time.LocalDate;
 import java.util.Collection;
 import java.util.Optional;
 
@@ -22,6 +26,8 @@ class RepositoryAuditLoanAgreementImplTest {
 
     @Autowired
     private RepositoryAuditLoanAgreement repositoryAuditLoanAgreement;
+    @MockBean
+    DateUtils dateUtils;
 
     @Before
     public void setUp(){
@@ -29,12 +35,14 @@ class RepositoryAuditLoanAgreementImplTest {
 
     @Test
     void getLoanAgreementWithDateClosedOverdue() {
+        Mockito.when(dateUtils.getNow()).thenReturn(LocalDate.of(2020, 2, 21));
         Collection<ObjectAudit> auditResults = repositoryAuditLoanAgreement.getLoanAgreementWithDateClosedOverdue();
-        assertEquals(23, auditResults.size());
+        assertEquals(22, auditResults.size());
     }
 
     @Test
     void isDateClosedOverDue() {
+        Mockito.when(dateUtils.getNow()).thenReturn(LocalDate.of(2020, 2, 21));
         Optional<ObjectAudit> objectAuditNotExist = repositoryAuditLoanAgreement.isDateClosedOverDue(1L);
         Optional<ObjectAudit> objectAuditExist = repositoryAuditLoanAgreement.isDateClosedOverDue(2L);
 

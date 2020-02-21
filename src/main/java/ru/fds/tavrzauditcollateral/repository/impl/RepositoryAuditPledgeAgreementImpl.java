@@ -10,6 +10,7 @@ import ru.fds.tavrzauditcollateral.repository.RepositoryAuditPledgeAgreement;
 import ru.fds.tavrzauditcollateral.rowmapper.AgreementAuditCountWrapper;
 import ru.fds.tavrzauditcollateral.rowmapper.AgreementAuditDateWrapper;
 import ru.fds.tavrzauditcollateral.rowmapper.AgreementAuditCostWrapper;
+import ru.fds.tavrzauditcollateral.utils.DateUtils;
 
 import java.util.Collection;
 import java.util.Optional;
@@ -18,14 +19,15 @@ import java.util.Optional;
 public class RepositoryAuditPledgeAgreementImpl implements RepositoryAuditPledgeAgreement {
 
     private static final String PARAM_PA_ID = "pledgeAgreementId";
+    private static final String PARAM_DATE_NOW = "dateNow";
     private static final String QUERY_PA_WITH_DATE_CLOSED_OVERDUE = "select d.dz_id, d.num_dz, d.date_begin_dz, d.date_end_dz\n" +
                                                                     "from dz d\n" +
-                                                                    "where d.date_end_dz < now()\n" +
+                                                                    "where d.date_end_dz < :dateNow\n" +
                                                                     "and\n" +
                                                                     "d.status = 'открыт'";
     private static final String QUERY_IS_PA_DATE_END_OVERDUE = "select d.dz_id, d.num_dz, d.date_begin_dz, d.date_end_dz\n" +
                                                                 "from dz d\n" +
-                                                                "where d.date_end_dz < now()\n" +
+                                                                "where d.date_end_dz < :dateNow\n" +
                                                                 "and\n" +
                                                                 "d.status = 'открыт'\n" +
                                                                 "and\n" +
@@ -77,25 +79,31 @@ public class RepositoryAuditPledgeAgreementImpl implements RepositoryAuditPledge
     private final AgreementAuditDateWrapper agreementAuditDateWrapper;
     private final AgreementAuditCostWrapper agreementAuditCostWrapper;
     private final AgreementAuditCountWrapper agreementAuditCountWrapper;
+    private final DateUtils dateUtils;
 
     public RepositoryAuditPledgeAgreementImpl(NamedParameterJdbcTemplate template,
                                               AgreementAuditDateWrapper agreementAuditDateWrapper,
                                               AgreementAuditCostWrapper agreementAuditCostWrapper,
-                                              AgreementAuditCountWrapper agreementAuditCountWrapper) {
+                                              AgreementAuditCountWrapper agreementAuditCountWrapper,
+                                              DateUtils dateUtils) {
         this.template = template;
         this.agreementAuditDateWrapper = agreementAuditDateWrapper;
         this.agreementAuditCostWrapper = agreementAuditCostWrapper;
         this.agreementAuditCountWrapper = agreementAuditCountWrapper;
+        this.dateUtils = dateUtils;
     }
 
     @Override
     public Collection<ObjectAudit> getPledgeAgreementWithDateClosedOverdue() {
-        return template.query(QUERY_PA_WITH_DATE_CLOSED_OVERDUE, agreementAuditDateWrapper);
+        SqlParameterSource parameterSource = new MapSqlParameterSource().addValue(PARAM_DATE_NOW, dateUtils.getNow());
+        return template.query(QUERY_PA_WITH_DATE_CLOSED_OVERDUE, parameterSource, agreementAuditDateWrapper);
     }
 
     @Override
     public Optional<ObjectAudit> isDateClosedOverDue(Long pledgeAgreementId) {
-        SqlParameterSource parameterSource = new MapSqlParameterSource().addValue(PARAM_PA_ID, pledgeAgreementId);
+        SqlParameterSource parameterSource = new MapSqlParameterSource()
+                .addValue(PARAM_PA_ID, pledgeAgreementId)
+                .addValue(PARAM_DATE_NOW, dateUtils.getNow());
         return Optional.ofNullable(DataAccessUtils.singleResult(template.query(QUERY_IS_PA_DATE_END_OVERDUE,
                 parameterSource,
                 agreementAuditDateWrapper)));
