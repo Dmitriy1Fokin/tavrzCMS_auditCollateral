@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.junit4.SpringRunner;
+import ru.fds.tavrzauditcollateral.TestUtils;
 import ru.fds.tavrzauditcollateral.dictionary.AuditStatus;
 import ru.fds.tavrzauditcollateral.dictionary.TypeOfObject;
 import ru.fds.tavrzauditcollateral.domain.nosql.AuditResult;
@@ -32,8 +33,8 @@ class PledgeAgreementServiceImplTest {
 
     @BeforeEach
     void setUp() {
-        AuditResult auditResult = ServiceTestUtils.getTestAuditResult();
-        Collection<AuditResult> auditResults = ServiceTestUtils.getTestListAuditResult();
+        AuditResult auditResult = TestUtils.getTestAuditResult();
+        Collection<AuditResult> auditResults = TestUtils.getTestListAuditResult();
         Mockito.when(repositoryAuditResult.getExistAuditResults(TypeOfObject.PLEDGE_AGREEMENT, auditResult.getObjectId()))
                 .thenReturn(auditResults);
         Mockito.when(repositoryAuditResult.getExistAuditResults(TypeOfObject.PLEDGE_AGREEMENT, auditResult.getObjectId(), AuditStatus.ACTUAL))
@@ -42,13 +43,13 @@ class PledgeAgreementServiceImplTest {
 
     @Test
     void getAuditResultsAboutObject() {
-        Collection<AuditResult> auditResults = pledgeAgreementService.getAuditResultsAboutObject(ServiceTestUtils.getTestAuditResult().getObjectId());
+        Collection<AuditResult> auditResults = pledgeAgreementService.getAuditResultsAboutObject(TestUtils.getTestAuditResult().getObjectId());
         assertEquals(2, auditResults.size());
     }
 
     @Test
     void testGetAuditResultsAboutObject() {
-        Collection<AuditResult> auditResults = pledgeAgreementService.getAuditResultsAboutObject(ServiceTestUtils.getTestAuditResult().getObjectId(), AuditStatus.ACTUAL);
+        Collection<AuditResult> auditResults = pledgeAgreementService.getAuditResultsAboutObject(TestUtils.getTestAuditResult().getObjectId(), AuditStatus.ACTUAL);
         assertEquals(2, auditResults.size());
     }
 }

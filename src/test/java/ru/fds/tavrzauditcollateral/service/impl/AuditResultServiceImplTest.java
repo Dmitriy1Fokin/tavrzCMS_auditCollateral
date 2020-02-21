@@ -11,6 +11,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.test.context.junit4.SpringRunner;
+import ru.fds.tavrzauditcollateral.TestUtils;
 import ru.fds.tavrzauditcollateral.dictionary.AuditStatus;
 import ru.fds.tavrzauditcollateral.domain.nosql.AuditResult;
 import ru.fds.tavrzauditcollateral.repository.RepositoryAuditResult;
@@ -32,9 +33,9 @@ class AuditResultServiceImplTest {
     @BeforeEach
     void setUp() {
         Pageable pageable = PageRequest.of(1, 50);
-        Mockito.when(repositoryAuditResult.findAll(pageable)).thenReturn(ServiceTestUtils.getTestPageAuditResult());
+        Mockito.when(repositoryAuditResult.findAll(pageable)).thenReturn(TestUtils.getTestPageAuditResult());
 
-        AuditResult auditResult = ServiceTestUtils.getTestAuditResult();
+        AuditResult auditResult = TestUtils.getTestAuditResult();
         Optional<AuditResult> optionalAuditResult = Optional.of(auditResult);
         Mockito.when(repositoryAuditResult.findById(auditResult.getId())).thenReturn(optionalAuditResult);
         Mockito.when(repositoryAuditResult.save(auditResult)).thenReturn(auditResult);
@@ -48,7 +49,7 @@ class AuditResultServiceImplTest {
 
     @Test
     void setAuditStatus() {
-        AuditResult auditResult = auditResultService.setAuditStatus(ServiceTestUtils.getTestAuditResult().getId(), AuditStatus.IGNORE);
+        AuditResult auditResult = auditResultService.setAuditStatus(TestUtils.getTestAuditResult().getId(), AuditStatus.IGNORE);
         assertEquals(AuditStatus.IGNORE, auditResult.getAuditStatus());
     }
 }
