@@ -1,6 +1,6 @@
 package ru.fds.tavrzauditcollateral.repository.impl;
 
-import org.junit.Before;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mockito;
@@ -29,20 +29,19 @@ class RepositoryAuditLoanAgreementImplTest {
     @MockBean
     DateUtils dateUtils;
 
-    @Before
+    @BeforeEach
     public void setUp(){
+        Mockito.when(dateUtils.getNow()).thenReturn(LocalDate.of(2020, 2, 21));
     }
 
     @Test
     void getLoanAgreementWithDateClosedOverdue() {
-        Mockito.when(dateUtils.getNow()).thenReturn(LocalDate.of(2020, 2, 21));
         Collection<ObjectAudit> auditResults = repositoryAuditLoanAgreement.getLoanAgreementWithDateClosedOverdue();
         assertEquals(22, auditResults.size());
     }
 
     @Test
     void isDateClosedOverDue() {
-        Mockito.when(dateUtils.getNow()).thenReturn(LocalDate.of(2020, 2, 21));
         Optional<ObjectAudit> objectAuditNotExist = repositoryAuditLoanAgreement.isDateClosedOverDue(1L);
         Optional<ObjectAudit> objectAuditExist = repositoryAuditLoanAgreement.isDateClosedOverDue(2L);
 
