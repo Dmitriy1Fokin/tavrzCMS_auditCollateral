@@ -43,6 +43,8 @@ public class PledgeSubjectServiceImpl implements ObjectAuditService {
     @Override
     @Transactional
     public void executeAuditAboutNewObject(Long id) {
+        log.debug("start executeAuditAboutNewObject. pledgeSubjectId: {}", id);
+
         Collection<AuditResult> auditResults = new ArrayList<>();
 
         repositoryAuditPledgeSubject.isHaveLowLiquidityAndNotZeroSS(id).ifPresent(objectAudit -> {
@@ -283,13 +285,14 @@ public class PledgeSubjectServiceImpl implements ObjectAuditService {
             auditResults.add(auditResult);
         });
 
-        log.debug("executeAuditAboutNewObject. Collection<AuditResult>: {}", auditResults.toString());
         repositoryAuditResult.saveAll(auditResults);
     }
 
     @Override
     @Transactional
     public void executeAuditAboutExistObject(Long id) {
+        log.debug("start executeAuditAboutExistObject. pledgeSubjectId: {}", id);
+
         Collection<AuditResult> auditResults = new ArrayList<>();
 
         repositoryAuditPledgeSubject.isHaveLowLiquidityAndNotZeroSS(id)
@@ -446,13 +449,14 @@ public class PledgeSubjectServiceImpl implements ObjectAuditService {
                                         })
                 );
 
-        log.debug("executeAuditAboutExistObject. Collection<AuditResult>: {}", auditResults.toString());
         repositoryAuditResult.saveAll(auditResults);
     }
 
     @Override
     @Transactional
     public void executeAuditAboutAllObjects() {
+        log.debug("start executeAuditAboutAllObjects (Pledge Subjects)");
+
         Collection<AuditResult> auditResults = new ArrayList<>();
 
         repositoryAuditPledgeSubject.getPledgeSubjectWithLowLiquidityAndNotZeroSs().forEach(objectAudit ->
@@ -497,7 +501,6 @@ public class PledgeSubjectServiceImpl implements ObjectAuditService {
         repositoryAuditPledgeSubject.getPledgeSubjectsWithInsuranceOverdue().forEach(objectAudit ->
                 auditResults.add(createAuditResultInsuranceOverdue(objectAudit)));
 
-        log.debug("executeAuditAboutAllObjects. Collection<AuditResult>: {}", auditResults.toString());
         repositoryAuditResult.saveAll(auditResults);
     }
 

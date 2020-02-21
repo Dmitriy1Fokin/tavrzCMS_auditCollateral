@@ -43,7 +43,10 @@ public class LoanAgreementServiceImpl implements ObjectAuditService {
     @Override
     @Transactional
     public void executeAuditAboutNewObject(Long id){
+        log.debug("start executeAuditAboutNewObject. loanAgreementId: {}", id);
+
         Collection<AuditResult> auditResults = new ArrayList<>();
+
         repositoryAuditLoanAgreement.isDateClosedOverDue(id).ifPresent(objectAudit -> {
             AuditResult auditResult = AuditResult.builder()
                     .date(LocalDate.now())
@@ -95,13 +98,14 @@ public class LoanAgreementServiceImpl implements ObjectAuditService {
             auditResults.add(auditResult);
         });
 
-        log.debug("executeAuditAboutNewObject. Collection<AuditResult>: {}", auditResults.toString());
         repositoryAuditResult.saveAll(auditResults);
     }
 
     @Override
     @Transactional
     public void executeAuditAboutExistObject(Long id){
+        log.debug("start executeAuditAboutExistObject. loanAgreementId: {}", id);
+
         Collection<AuditResult> auditResults = new ArrayList<>();
 
         repositoryAuditLoanAgreement.isDateClosedOverDue(id)
@@ -137,13 +141,14 @@ public class LoanAgreementServiceImpl implements ObjectAuditService {
                                         })
                 );
 
-        log.debug("executeAuditAboutExistObject. Collection<AuditResult>: {}", auditResults.toString());
         repositoryAuditResult.saveAll(auditResults);
     }
 
     @Override
     @Transactional
     public void executeAuditAboutAllObjects(){
+        log.debug("start executeAuditAboutAllObjects (Loan Agreements)");
+
         Collection<AuditResult> auditResults = new ArrayList<>();
 
         repositoryAuditLoanAgreement.getLoanAgreementWithDateClosedOverdue().forEach(objectAudit ->
@@ -155,7 +160,6 @@ public class LoanAgreementServiceImpl implements ObjectAuditService {
         repositoryAuditLoanAgreement.getLoanAgreementWithoutPledge().forEach(objectAudit ->
             auditResults.add(createAuditResultHaveNotPA(objectAudit)));
 
-        log.debug("executeAuditAboutAllObjects. Collection<AuditResult>: {}", auditResults.toString());
         repositoryAuditResult.saveAll(auditResults);
     }
 

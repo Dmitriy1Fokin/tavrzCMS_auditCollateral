@@ -43,6 +43,8 @@ public class PledgeAgreementServiceImpl implements ObjectAuditService {
     @Override
     @Transactional
     public void executeAuditAboutNewObject(Long id) {
+        log.debug("start executeAuditAboutNewObject. pledgeAgreementId: {}", id);
+
         Collection<AuditResult> auditResults = new ArrayList<>();
 
         repositoryAuditPledgeAgreement.isDateClosedOverDue(id).ifPresent(objectAudit -> {
@@ -130,13 +132,14 @@ public class PledgeAgreementServiceImpl implements ObjectAuditService {
             auditResults.add(auditResult);
         });
 
-        log.debug("executeAuditAboutNewObject. Collection<AuditResult>: {}", auditResults.toString());
         repositoryAuditResult.saveAll(auditResults);
     }
 
     @Override
     @Transactional
     public void executeAuditAboutExistObject(Long id) {
+        log.debug("start executeAuditAboutExistObject. pledgeAgreementId: {}", id);
+
         Collection<AuditResult> auditResults = new ArrayList<>();
 
         repositoryAuditPledgeAgreement.isDateClosedOverDue(id)
@@ -194,13 +197,14 @@ public class PledgeAgreementServiceImpl implements ObjectAuditService {
                                         })
                 );
 
-        log.debug("executeAuditAboutExistObject. Collection<AuditResult>: {}", auditResults.toString());
         repositoryAuditResult.saveAll(auditResults);
     }
 
     @Override
     @Transactional
     public void executeAuditAboutAllObjects() {
+        log.debug("start executeAuditAboutAllObjects (Pledge Agreements)");
+
         Collection<AuditResult> auditResults = new ArrayList<>();
 
         repositoryAuditPledgeAgreement.getPledgeAgreementWithDateClosedOverdue().forEach(objectAudit ->
@@ -218,7 +222,6 @@ public class PledgeAgreementServiceImpl implements ObjectAuditService {
         repositoryAuditPledgeAgreement.getPledgeAgreementsWithoutPledgeSubjects().forEach(objectAudit ->
                 auditResults.add(createAuditResultNotExistPS(objectAudit)));
 
-        log.debug("executeAuditAboutAllObjects. Collection<AuditResult>: {}", auditResults.toString());
         repositoryAuditResult.saveAll(auditResults);
     }
 
