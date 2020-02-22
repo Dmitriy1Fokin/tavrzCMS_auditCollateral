@@ -36,7 +36,7 @@ eureka:
 logging:
   level.ru.fds.tavrzauditcollateral: debug
 
-#start scheduler in every sunday in 03:00:00 A.M.
+#start scheduler in every sunday at 03:00:00 A.M.
 cron:
   expression: 0 0 3 ? * SUN
 
