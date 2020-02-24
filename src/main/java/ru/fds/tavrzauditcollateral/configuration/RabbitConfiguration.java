@@ -27,6 +27,8 @@ public class RabbitConfiguration {
     private String queueNameAuditNewPledgeSubject;
     @Value("${queue_name.audit_exist_pledge_subject}")
     private String queueNameAuditExistPledgeSubject;
+    @Value("${queue_name.execute_audit}")
+    private String queueExecuteAudit;
 
 
     @Bean
@@ -72,6 +74,11 @@ public class RabbitConfiguration {
     @Bean
     public Queue queueAuditExistPledgeSubject(){
         return new Queue(queueNameAuditExistPledgeSubject);
+    }
+
+    @Bean
+    public Queue queueExecuteAudit(){
+        return new Queue(queueExecuteAudit);
     }
 
 }

@@ -24,12 +24,12 @@ spring:
     name: tavrz-cms-audit
 
 server:
-  port: 0
+  port: 7979
 
 eureka:
   client:
     serviceUrl:
-      defaultZone: ${EUREKA_URI:http://localhost:8761/eureka}
+      defaultZone: http://localhost:8761/eureka
   instance:
     preferIpAddress: true
 
@@ -47,6 +47,7 @@ queue_name:
   audit_exist_pledge_agreement: queue_audit_exist_pledge_agreement
   audit_new_pledge_subject: queue_audit_new_pledge_subject
   audit_exist_pledge_subject: queue_audit_exist_pledge_subject
+  execute_audit: queue_execute_audit
 
 description_audit_result:
   loan_agreement:
