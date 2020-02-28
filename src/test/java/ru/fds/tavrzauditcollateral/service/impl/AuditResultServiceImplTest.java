@@ -17,6 +17,7 @@ import ru.fds.tavrzauditcollateral.domain.nosql.AuditResult;
 import ru.fds.tavrzauditcollateral.repository.RepositoryAuditResult;
 import ru.fds.tavrzauditcollateral.service.AuditResultService;
 
+import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -43,8 +44,8 @@ class AuditResultServiceImplTest {
 
     @Test
     void getAllAuditResults() {
-        Page<AuditResult> auditResults = auditResultService.getAllAuditResults(PageRequest.of(1, 50));
-        assertEquals(2, auditResults.getContent().size());
+        List<AuditResult> auditResults = auditResultService.getAllAuditResults(PageRequest.of(1, 50));
+        assertEquals(2, auditResults.size());
     }
 
     @Test
