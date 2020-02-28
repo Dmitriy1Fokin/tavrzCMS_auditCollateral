@@ -42,14 +42,44 @@ public class AuditResultController {
         return auditResultConverter.toDto(loanAgreementService.getAuditResultsAboutObject(loanAgreementId));
     }
 
+    @GetMapping("/loan_agreement/actual")
+    public Collection<AuditResultDto> getActualAuditResultAboutLoanAgreement(@RequestParam("loanAgreementId") Long loanAgreementId){
+        return auditResultConverter.toDto(loanAgreementService.getAuditResultsAboutObject(loanAgreementId, AuditStatus.ACTUAL));
+    }
+
+    @GetMapping("/loan_agreement/ignore")
+    public Collection<AuditResultDto> getIgnoreAuditResultAboutLoanAgreement(@RequestParam("loanAgreementId") Long loanAgreementId){
+        return auditResultConverter.toDto(loanAgreementService.getAuditResultsAboutObject(loanAgreementId, AuditStatus.IGNORE));
+    }
+
     @GetMapping("/pledge_agreement")
     public Collection<AuditResultDto> getAuditResultAboutPledgeAgreement(@RequestParam("pledgeAgreementId") Long pledgeAgreementId){
         return auditResultConverter.toDto(pledgeAgreementService.getAuditResultsAboutObject(pledgeAgreementId));
     }
 
+    @GetMapping("/pledge_agreement/actual")
+    public Collection<AuditResultDto> getActualAuditResultAboutPledgeAgreement(@RequestParam("pledgeAgreementId") Long pledgeAgreementId){
+        return auditResultConverter.toDto(pledgeAgreementService.getAuditResultsAboutObject(pledgeAgreementId, AuditStatus.ACTUAL));
+    }
+
+    @GetMapping("/pledge_agreement/ignore")
+    public Collection<AuditResultDto> getIgnoreAuditResultAboutPledgeAgreement(@RequestParam("pledgeAgreementId") Long pledgeAgreementId){
+        return auditResultConverter.toDto(pledgeAgreementService.getAuditResultsAboutObject(pledgeAgreementId, AuditStatus.IGNORE));
+    }
+
     @GetMapping("/pledge_subject")
     public Collection<AuditResultDto> getAuditResultAboutPledgeSubject(@RequestParam("pledgeSubjectId") Long pledgeSubjectId){
         return auditResultConverter.toDto(pledgeSubjectService.getAuditResultsAboutObject(pledgeSubjectId));
+    }
+
+    @GetMapping("/pledge_subject/actual")
+    public Collection<AuditResultDto> getActualAuditResultAboutPledgeSubject(@RequestParam("pledgeSubjectId") Long pledgeSubjectId){
+        return auditResultConverter.toDto(pledgeSubjectService.getAuditResultsAboutObject(pledgeSubjectId, AuditStatus.ACTUAL));
+    }
+
+    @GetMapping("/pledge_subject/ignore")
+    public Collection<AuditResultDto> getIgnoreAuditResultAboutPledgeSubject(@RequestParam("pledgeSubjectId") Long pledgeSubjectId){
+        return auditResultConverter.toDto(pledgeSubjectService.getAuditResultsAboutObject(pledgeSubjectId, AuditStatus.IGNORE));
     }
 
     @GetMapping()

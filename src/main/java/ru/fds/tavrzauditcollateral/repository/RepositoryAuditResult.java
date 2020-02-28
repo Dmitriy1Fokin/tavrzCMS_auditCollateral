@@ -15,6 +15,6 @@ public interface RepositoryAuditResult extends MongoRepository<AuditResult, Stri
     Optional<AuditResult> getExistAuditResult(TypeOfObject typeOfObject, Long objectId, TypeOfAudit typeOfAudit);
     @Query("{ 'typeOfObject' : ?0, 'objectId' : ?1, 'AuditStatus' : {$in : ['ACTUAL', 'IGNORE']}}}")
     Collection<AuditResult> getExistAuditResults(TypeOfObject typeOfObject, Long objectId);
-    @Query("{ 'typeOfObject' : ?0, 'objectId' : ?1, 'AuditStatus' : ?3}")
+    @Query("{ 'typeOfObject' : ?0, 'objectId' : ?1, 'AuditStatus' : ?2}")
     Collection<AuditResult> getExistAuditResults(TypeOfObject typeOfObject, Long objectId, AuditStatus auditStatus);
 }
