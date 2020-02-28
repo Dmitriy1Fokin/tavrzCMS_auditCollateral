@@ -20,13 +20,11 @@ public class PledgeSubjectListener {
 
     @RabbitListener(queues = "${queue_name.audit_new_pledge_subject}")
     public void auditNewPledgeSubject(Long pledgeSubjectId){
-        log.debug("auditNewPledgeSubject. pledgeSubjectId: {}", pledgeSubjectId);
         pledgeSubjectService.executeAuditAboutNewObject(pledgeSubjectId);
     }
 
     @RabbitListener(queues = "${queue_name.audit_exist_pledge_subject}")
     public void auditExistPledgeSubject(Long pledgeSubjectId){
-        log.debug("auditExistPledgeSubject. pledgeSubjectId: {}", pledgeSubjectId);
         pledgeSubjectService.executeAuditAboutExistObject(pledgeSubjectId);
     }
 }

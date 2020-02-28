@@ -2,7 +2,6 @@ package ru.fds.tavrzauditcollateral.service.impl;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -12,6 +11,8 @@ import ru.fds.tavrzauditcollateral.exception.NotFoundException;
 import ru.fds.tavrzauditcollateral.repository.RepositoryAuditResult;
 import ru.fds.tavrzauditcollateral.service.AuditResultService;
 import ru.fds.tavrzauditcollateral.service.ObjectAuditService;
+
+import java.util.List;
 
 @Slf4j
 @Service
@@ -35,19 +36,22 @@ public class AuditResultServiceImpl implements AuditResultService {
 
     @Override
     public void executeAuditInAllObjects() {
+        log.info("start executeAuditInAllObjects");
         loanAgreementService.executeAuditAboutAllObjects();
         pledgeAgreementService.executeAuditAboutAllObjects();
         pledgeSubjectService.executeAuditAboutAllObjects();
+        log.info("end executeAuditInAllObjects");
     }
 
     @Override
-    public Page<AuditResult> getAllAuditResults(Pageable pageable) {
-        return repositoryAuditResult.findAll(pageable);
+    public List<AuditResult> getAllAuditResults(Pageable pageable) {
+        return repositoryAuditResult.findAll(pageable).getContent();
     }
 
     @Override
     @Transactional
     public AuditResult setAuditStatus(String auditResultId, AuditStatus auditStatus) {
+        log.info("setAuditStatus for object. id: {}, status: {}", auditResultId, auditStatus);
         return repositoryAuditResult.findById(auditResultId).map(auditResult -> {
             auditResult.setAuditStatus(auditStatus);
             return repositoryAuditResult.save(auditResult);

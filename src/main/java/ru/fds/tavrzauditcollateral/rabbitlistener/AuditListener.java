@@ -19,7 +19,6 @@ public class AuditListener {
 
     @RabbitListener(queues = "${queue_name.execute_audit}")
     public void executeAudit(){
-        log.debug("start executeAudit");
         auditResultService.executeAuditInAllObjects();
     }
 }

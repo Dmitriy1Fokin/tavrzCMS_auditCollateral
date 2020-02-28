@@ -43,91 +43,32 @@ public class PledgeAgreementServiceImpl implements ObjectAuditService {
     @Override
     @Transactional
     public void executeAuditAboutNewObject(Long id) {
-        log.debug("start executeAuditAboutNewObject. pledgeAgreementId: {}", id);
+        log.info("start executeAuditAboutNewObject. pledgeAgreementId: {}", id);
 
         Collection<AuditResult> auditResults = new ArrayList<>();
 
         repositoryAuditPledgeAgreement.isDateClosedOverDue(id).ifPresent(objectAudit -> {
-            AuditResult auditResult = AuditResult.builder()
-                    .date(LocalDate.now())
-                    .typeOfObject(TypeOfObject.PLEDGE_AGREEMENT)
-                    .objectId(objectAudit.getId())
-                    .nameOfObject(objectAudit.getNameObject())
-                    .typeOfAudit(TypeOfAudit.PLEDGE_AGREEMENT_DATE_CLOSED)
-                    .valueInField(objectAudit.getWrongValueInField())
-                    .auditLevel(AuditLevel.LOW)
-                    .descriptionResult(descriptionResult.getPledgeAgreementDateClosed())
-                    .advice(auditAdvice.getPledgeAgreementDateClosed())
-                    .auditStatus(AuditStatus.ACTUAL)
-                    .build();
-
+            AuditResult auditResult = createAuditResultDateClosed(objectAudit);
             auditResults.add(auditResult);
         });
 
         repositoryAuditPledgeAgreement.isHaveNotLoanAgreements(id).ifPresent(objectAudit -> {
-            AuditResult auditResult = AuditResult.builder()
-                    .date(LocalDate.now())
-                    .typeOfObject(TypeOfObject.PLEDGE_AGREEMENT)
-                    .objectId(objectAudit.getId())
-                    .nameOfObject(objectAudit.getNameObject())
-                    .typeOfAudit(TypeOfAudit.PLEDGE_AGREEMENT_NOT_EXIST_LA)
-                    .valueInField(objectAudit.getWrongValueInField())
-                    .auditLevel(AuditLevel.MEDIUM)
-                    .descriptionResult(descriptionResult.getPledgeAgreementNotExistLA())
-                    .advice(auditAdvice.getPledgeAgreementNotExistLA())
-                    .auditStatus(AuditStatus.ACTUAL)
-                    .build();
-
+            AuditResult auditResult = createAuditResultNotExistLA(objectAudit);
             auditResults.add(auditResult);
         });
 
         repositoryAuditPledgeAgreement.isZeroZsDz(id).ifPresent(objectAudit -> {
-            AuditResult auditResult = AuditResult.builder()
-                    .date(LocalDate.now())
-                    .typeOfObject(TypeOfObject.PLEDGE_AGREEMENT)
-                    .objectId(objectAudit.getId())
-                    .nameOfObject(objectAudit.getNameObject())
-                    .typeOfAudit(TypeOfAudit.PLEDGE_AGREEMENT_ZERO_ZS_DZ)
-                    .valueInField(objectAudit.getWrongValueInField())
-                    .auditLevel(AuditLevel.HIGH)
-                    .descriptionResult(descriptionResult.getPledgeAgreementZeroZzDZ())
-                    .advice(auditAdvice.getPledgeAgreementZeroZzDZ())
-                    .auditStatus(AuditStatus.ACTUAL)
-                    .build();
-
+            AuditResult auditResult = createAuditResultZeroZsDZ(objectAudit);
             auditResults.add(auditResult);
         });
 
         repositoryAuditPledgeAgreement.isZeroZsZZ(id).ifPresent(objectAudit -> {
-            AuditResult auditResult = AuditResult.builder()
-                    .date(LocalDate.now())
-                    .typeOfObject(TypeOfObject.PLEDGE_AGREEMENT)
-                    .objectId(objectAudit.getId())
-                    .nameOfObject(objectAudit.getNameObject())
-                    .typeOfAudit(TypeOfAudit.PLEDGE_AGREEMENT_ZERO_ZS_ZZ)
-                    .valueInField(objectAudit.getWrongValueInField())
-                    .auditLevel(AuditLevel.HIGH)
-                    .descriptionResult(descriptionResult.getPledgeAgreementZeroZsZz())
-                    .advice(auditAdvice.getPledgeAgreementZeroZsZz())
-                    .auditStatus(AuditStatus.ACTUAL)
-                    .build();
-
+            AuditResult auditResult = createAuditResultZeroZsZz(objectAudit);
             auditResults.add(auditResult);
         });
 
         repositoryAuditPledgeAgreement.isHaveNotPledgeSubjects(id).ifPresent(objectAudit -> {
-            AuditResult auditResult = AuditResult.builder()
-                    .date(LocalDate.now())
-                    .typeOfObject(TypeOfObject.PLEDGE_AGREEMENT)
-                    .objectId(objectAudit.getId())
-                    .nameOfObject(objectAudit.getNameObject())
-                    .typeOfAudit(TypeOfAudit.PLEDGE_AGREEMENT_NOT_EXIST_PS)
-                    .valueInField(objectAudit.getWrongValueInField())
-                    .auditLevel(AuditLevel.MEDIUM)
-                    .descriptionResult(descriptionResult.getPledgeAgreementNotExistPS())
-                    .advice(auditAdvice.getPledgeAgreementNotExistPS())
-                    .auditStatus(AuditStatus.ACTUAL)
-                    .build();
+            AuditResult auditResult = createAuditResultNotExistPS(objectAudit);
 
             auditResults.add(auditResult);
         });
@@ -138,7 +79,7 @@ public class PledgeAgreementServiceImpl implements ObjectAuditService {
     @Override
     @Transactional
     public void executeAuditAboutExistObject(Long id) {
-        log.debug("start executeAuditAboutExistObject. pledgeAgreementId: {}", id);
+        log.info("start executeAuditAboutExistObject. pledgeAgreementId: {}", id);
 
         Collection<AuditResult> auditResults = new ArrayList<>();
 
@@ -203,7 +144,7 @@ public class PledgeAgreementServiceImpl implements ObjectAuditService {
     @Override
     @Transactional
     public void executeAuditAboutAllObjects() {
-        log.debug("start executeAuditAboutAllObjects (Pledge Agreements)");
+        log.info("start executeAuditAboutAllObjects (Pledge Agreements)");
 
         Collection<AuditResult> auditResults = new ArrayList<>();
 
@@ -223,6 +164,7 @@ public class PledgeAgreementServiceImpl implements ObjectAuditService {
                 auditResults.add(createAuditResultNotExistPS(objectAudit)));
 
         repositoryAuditResult.saveAll(auditResults);
+        log.info("end executeAuditAboutAllObjects (Pledge Agreements)");
     }
 
     @Override

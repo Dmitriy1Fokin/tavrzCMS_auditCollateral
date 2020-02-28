@@ -43,245 +43,77 @@ public class PledgeSubjectServiceImpl implements ObjectAuditService {
     @Override
     @Transactional
     public void executeAuditAboutNewObject(Long id) {
-        log.debug("start executeAuditAboutNewObject. pledgeSubjectId: {}", id);
+        log.info("start executeAuditAboutNewObject. pledgeSubjectId: {}", id);
 
         Collection<AuditResult> auditResults = new ArrayList<>();
 
         repositoryAuditPledgeSubject.isHaveLowLiquidityAndNotZeroSS(id).ifPresent(objectAudit -> {
-            AuditResult auditResult = AuditResult.builder()
-                    .date(LocalDate.now())
-                    .typeOfObject(TypeOfObject.PLEDGE_SUBJECT)
-                    .objectId(objectAudit.getId())
-                    .nameOfObject(objectAudit.getNameObject())
-                    .typeOfAudit(TypeOfAudit.PLEDGE_SUBJECT_LOW_LIQUIDITY_NOT_ZERO_SS)
-                    .valueInField(objectAudit.getWrongValueInField())
-                    .auditLevel(AuditLevel.HIGH)
-                    .descriptionResult(descriptionResult.getPledgeSubjectLowLiquidityNotZeroSS())
-                    .advice(auditAdvice.getPledgeSubjectLowLiquidityNotZeroSS())
-                    .auditStatus(AuditStatus.ACTUAL)
-                    .build();
-
+            AuditResult auditResult = createAuditResultLowLiquidityAndNotZeroSS(objectAudit);
             auditResults.add(auditResult);
         });
 
         repositoryAuditPledgeSubject.isHaveZeroZsDz(id).ifPresent(objectAudit -> {
-            AuditResult auditResult = AuditResult.builder()
-                    .date(LocalDate.now())
-                    .typeOfObject(TypeOfObject.PLEDGE_SUBJECT)
-                    .objectId(objectAudit.getId())
-                    .nameOfObject(objectAudit.getNameObject())
-                    .typeOfAudit(TypeOfAudit.PLEDGE_SUBJECT_ZERO_ZS_DZ)
-                    .valueInField(objectAudit.getWrongValueInField())
-                    .auditLevel(AuditLevel.HIGH)
-                    .descriptionResult(descriptionResult.getPledgeSubjectZeroZsDz())
-                    .advice(auditAdvice.getPledgeSubjectZeroZsDz())
-                    .auditStatus(AuditStatus.ACTUAL)
-                    .build();
-
+            AuditResult auditResult = createAuditResultHaveZeroZsDz(objectAudit);
             auditResults.add(auditResult);
         });
 
         repositoryAuditPledgeSubject.isHaveZeroZsZz(id).ifPresent(objectAudit -> {
-            AuditResult auditResult = AuditResult.builder()
-                    .date(LocalDate.now())
-                    .typeOfObject(TypeOfObject.PLEDGE_SUBJECT)
-                    .objectId(objectAudit.getId())
-                    .nameOfObject(objectAudit.getNameObject())
-                    .typeOfAudit(TypeOfAudit.PLEDGE_SUBJECT_ZERO_ZS_ZZ)
-                    .valueInField(objectAudit.getWrongValueInField())
-                    .auditLevel(AuditLevel.HIGH)
-                    .descriptionResult(descriptionResult.getPledgeSubjectZeroZsZz())
-                    .advice(auditAdvice.getPledgeSubjectZeroZsZz())
-                    .auditStatus(AuditStatus.ACTUAL)
-                    .build();
-
+            AuditResult auditResult = createAuditResultHaveZeroZsZz(objectAudit);
             auditResults.add(auditResult);
         });
 
         repositoryAuditPledgeSubject.isHaveZeroRsDz(id).ifPresent(objectAudit -> {
-            AuditResult auditResult = AuditResult.builder()
-                    .date(LocalDate.now())
-                    .typeOfObject(TypeOfObject.PLEDGE_SUBJECT)
-                    .objectId(objectAudit.getId())
-                    .nameOfObject(objectAudit.getNameObject())
-                    .typeOfAudit(TypeOfAudit.PLEDGE_SUBJECT_ZERO_RS_DZ)
-                    .valueInField(objectAudit.getWrongValueInField())
-                    .auditLevel(AuditLevel.MEDIUM)
-                    .descriptionResult(descriptionResult.getPledgeSubjectZeroRsDz())
-                    .advice(auditAdvice.getPledgeSubjectZeroRsDz())
-                    .auditStatus(AuditStatus.ACTUAL)
-                    .build();
-
+            AuditResult auditResult = createAuditResultHaveZeroRsDz(objectAudit);
             auditResults.add(auditResult);
         });
 
         repositoryAuditPledgeSubject.isHaveZeroRsZz(id).ifPresent(objectAudit -> {
-            AuditResult auditResult = AuditResult.builder()
-                    .date(LocalDate.now())
-                    .typeOfObject(TypeOfObject.PLEDGE_SUBJECT)
-                    .objectId(objectAudit.getId())
-                    .nameOfObject(objectAudit.getNameObject())
-                    .typeOfAudit(TypeOfAudit.PLEDGE_SUBJECT_ZERO_RS_ZZ)
-                    .valueInField(objectAudit.getWrongValueInField())
-                    .auditLevel(AuditLevel.MEDIUM)
-                    .descriptionResult(descriptionResult.getPledgeSubjectZeroRsZz())
-                    .advice(auditAdvice.getPledgeSubjectZeroRsZz())
-                    .auditStatus(AuditStatus.ACTUAL)
-                    .build();
-
+            AuditResult auditResult = createAuditResultHaveZeroRsZz(objectAudit);
             auditResults.add(auditResult);
         });
 
         repositoryAuditPledgeSubject.isHaveZeroSs(id).ifPresent(objectAudit -> {
-            AuditResult auditResult = AuditResult.builder()
-                    .date(LocalDate.now())
-                    .typeOfObject(TypeOfObject.PLEDGE_SUBJECT)
-                    .objectId(objectAudit.getId())
-                    .nameOfObject(objectAudit.getNameObject())
-                    .typeOfAudit(TypeOfAudit.PLEDGE_SUBJECT_ZERO_SS)
-                    .valueInField(objectAudit.getWrongValueInField())
-                    .auditLevel(AuditLevel.MEDIUM)
-                    .descriptionResult(descriptionResult.getPledgeSubjectZeroSs())
-                    .advice(auditAdvice.getPledgeSubjectZeroSs())
-                    .auditStatus(AuditStatus.ACTUAL)
-                    .build();
-
+            AuditResult auditResult = createAuditResultHaveZeroSs(objectAudit);
             auditResults.add(auditResult);
         });
 
         repositoryAuditPledgeSubject.isMonitoringOverdue(id).ifPresent(objectAudit -> {
-            AuditResult auditResult = AuditResult.builder()
-                    .date(LocalDate.now())
-                    .typeOfObject(TypeOfObject.PLEDGE_SUBJECT)
-                    .objectId(objectAudit.getId())
-                    .nameOfObject(objectAudit.getNameObject())
-                    .typeOfAudit(TypeOfAudit.PLEDGE_SUBJECT_MONITORING_OVERDUE)
-                    .valueInField(objectAudit.getWrongValueInField())
-                    .auditLevel(AuditLevel.HIGH)
-                    .descriptionResult(descriptionResult.getPledgeSubjectMonitoringOverdue())
-                    .advice(auditAdvice.getPledgeSubjectMonitoringOverdue())
-                    .auditStatus(AuditStatus.ACTUAL)
-                    .build();
-
+            AuditResult auditResult = createAuditResultMonitoringOverdue(objectAudit);
             auditResults.add(auditResult);
         });
 
         repositoryAuditPledgeSubject.isConclusionOverdue(id).ifPresent(objectAudit -> {
-            AuditResult auditResult = AuditResult.builder()
-                    .date(LocalDate.now())
-                    .typeOfObject(TypeOfObject.PLEDGE_SUBJECT)
-                    .objectId(objectAudit.getId())
-                    .nameOfObject(objectAudit.getNameObject())
-                    .typeOfAudit(TypeOfAudit.PLEDGE_SUBJECT_CONCLUSION_OVERDUE)
-                    .valueInField(objectAudit.getWrongValueInField())
-                    .auditLevel(AuditLevel.HIGH)
-                    .descriptionResult(descriptionResult.getPledgeSubjectConclusionOverdue())
-                    .advice(auditAdvice.getPledgeSubjectConclusionOverdue())
-                    .auditStatus(AuditStatus.ACTUAL)
-                    .build();
-
+            AuditResult auditResult = createAuditResultConclusionOverdue(objectAudit);
             auditResults.add(auditResult);
         });
 
         repositoryAuditPledgeSubject.isLosing(id).ifPresent(objectAudit -> {
-            AuditResult auditResult = AuditResult.builder()
-                    .date(LocalDate.now())
-                    .typeOfObject(TypeOfObject.PLEDGE_SUBJECT)
-                    .objectId(objectAudit.getId())
-                    .nameOfObject(objectAudit.getNameObject())
-                    .typeOfAudit(TypeOfAudit.PLEDGE_SUBJECT_LOSING)
-                    .valueInField(objectAudit.getWrongValueInField())
-                    .auditLevel(AuditLevel.MEDIUM)
-                    .descriptionResult(descriptionResult.getPledgeSubjectLosing())
-                    .advice(auditAdvice.getPledgeSubjectLosing())
-                    .auditStatus(AuditStatus.ACTUAL)
-                    .build();
-
+            AuditResult auditResult = createAuditResultLosing(objectAudit);
             auditResults.add(auditResult);
         });
 
         repositoryAuditPledgeSubject.isHaveNotInsurance(id).ifPresent(objectAudit -> {
-            AuditResult auditResult = AuditResult.builder()
-                    .date(LocalDate.now())
-                    .typeOfObject(TypeOfObject.PLEDGE_SUBJECT)
-                    .objectId(objectAudit.getId())
-                    .nameOfObject(objectAudit.getNameObject())
-                    .typeOfAudit(TypeOfAudit.PLEDGE_SUBJECT_NOT_EXIST_INSURANCE)
-                    .valueInField(objectAudit.getWrongValueInField())
-                    .auditLevel(AuditLevel.HIGH)
-                    .descriptionResult(descriptionResult.getPledgeSubjectNotExistInsurance())
-                    .advice(auditAdvice.getPledgeSubjectNotExistInsurance())
-                    .auditStatus(AuditStatus.ACTUAL)
-                    .build();
-
+            AuditResult auditResult = createAuditResultHaveNotInsurance(objectAudit);
             auditResults.add(auditResult);
         });
 
         repositoryAuditPledgeSubject.isHaveNotOurEncumbrance(id).ifPresent(objectAudit -> {
-            AuditResult auditResult = AuditResult.builder()
-                    .date(LocalDate.now())
-                    .typeOfObject(TypeOfObject.PLEDGE_SUBJECT)
-                    .objectId(objectAudit.getId())
-                    .nameOfObject(objectAudit.getNameObject())
-                    .typeOfAudit(TypeOfAudit.PLEDGE_SUBJECT_NOT_EXIST_ENCUMBRANCE)
-                    .valueInField(objectAudit.getWrongValueInField())
-                    .auditLevel(AuditLevel.HIGH)
-                    .descriptionResult(descriptionResult.getPledgeSubjectNotExistEncumbrance())
-                    .advice(auditAdvice.getPledgeSubjectNotExistEncumbrance())
-                    .auditStatus(AuditStatus.ACTUAL)
-                    .build();
-
+            AuditResult auditResult = createAuditResultHaveNotOurEncumbrance(objectAudit);
             auditResults.add(auditResult);
         });
 
         repositoryAuditPledgeSubject.isHaveOtherEncumbrance(id).ifPresent(objectAudit -> {
-            AuditResult auditResult = AuditResult.builder()
-                    .date(LocalDate.now())
-                    .typeOfObject(TypeOfObject.PLEDGE_SUBJECT)
-                    .objectId(objectAudit.getId())
-                    .nameOfObject(objectAudit.getNameObject())
-                    .typeOfAudit(TypeOfAudit.PLEDGE_SUBJECT_EXIST_OTHER_ENCUMBRANCE)
-                    .valueInField(objectAudit.getWrongValueInField())
-                    .auditLevel(AuditLevel.HIGH)
-                    .descriptionResult(descriptionResult.getPledgeSubjectExistOtherEncumbrance())
-                    .advice(auditAdvice.getPledgeSubjectExistOtherEncumbrance())
-                    .auditStatus(AuditStatus.ACTUAL)
-                    .build();
-
+            AuditResult auditResult = createAuditResultHaveOtherEncumbrance(objectAudit);
             auditResults.add(auditResult);
         });
 
         repositoryAuditPledgeSubject.isEncumbranceOverdue(id).ifPresent(objectAudit -> {
-            AuditResult auditResult = AuditResult.builder()
-                    .date(LocalDate.now())
-                    .typeOfObject(TypeOfObject.PLEDGE_SUBJECT)
-                    .objectId(objectAudit.getId())
-                    .nameOfObject(objectAudit.getNameObject())
-                    .typeOfAudit(TypeOfAudit.PLEDGE_SUBJECT_ENCUMBRANCE_OVERDUE)
-                    .valueInField(objectAudit.getWrongValueInField())
-                    .auditLevel(AuditLevel.HIGH)
-                    .descriptionResult(descriptionResult.getPledgeSubjectEncumbranceOverdue())
-                    .advice(auditAdvice.getPledgeSubjectEncumbranceOverdue())
-                    .auditStatus(AuditStatus.ACTUAL)
-                    .build();
-
+            AuditResult auditResult = createAuditResultEncumbranceOverdue(objectAudit);
             auditResults.add(auditResult);
         });
 
         repositoryAuditPledgeSubject.isInsuranceOverdue(id).ifPresent(objectAudit -> {
-            AuditResult auditResult = AuditResult.builder()
-                    .date(LocalDate.now())
-                    .typeOfObject(TypeOfObject.PLEDGE_SUBJECT)
-                    .objectId(objectAudit.getId())
-                    .nameOfObject(objectAudit.getNameObject())
-                    .typeOfAudit(TypeOfAudit.PLEDGE_SUBJECT_INSURANCE_OVERDUE)
-                    .valueInField(objectAudit.getWrongValueInField())
-                    .auditLevel(AuditLevel.HIGH)
-                    .descriptionResult(descriptionResult.getPledgeSubjectInsuranceOverdue())
-                    .advice(auditAdvice.getPledgeSubjectInsuranceOverdue())
-                    .auditStatus(AuditStatus.ACTUAL)
-                    .build();
-
+            AuditResult auditResult = createAuditResultInsuranceOverdue(objectAudit);
             auditResults.add(auditResult);
         });
 
@@ -291,7 +123,7 @@ public class PledgeSubjectServiceImpl implements ObjectAuditService {
     @Override
     @Transactional
     public void executeAuditAboutExistObject(Long id) {
-        log.debug("start executeAuditAboutExistObject. pledgeSubjectId: {}", id);
+        log.info("start executeAuditAboutExistObject. pledgeSubjectId: {}", id);
 
         Collection<AuditResult> auditResults = new ArrayList<>();
 
@@ -455,7 +287,7 @@ public class PledgeSubjectServiceImpl implements ObjectAuditService {
     @Override
     @Transactional
     public void executeAuditAboutAllObjects() {
-        log.debug("start executeAuditAboutAllObjects (Pledge Subjects)");
+        log.info("start executeAuditAboutAllObjects (Pledge Subjects)");
 
         Collection<AuditResult> auditResults = new ArrayList<>();
 
@@ -502,6 +334,7 @@ public class PledgeSubjectServiceImpl implements ObjectAuditService {
                 auditResults.add(createAuditResultInsuranceOverdue(objectAudit)));
 
         repositoryAuditResult.saveAll(auditResults);
+        log.info("end executeAuditAboutAllObjects (Pledge Subjects)");
     }
 
     @Override

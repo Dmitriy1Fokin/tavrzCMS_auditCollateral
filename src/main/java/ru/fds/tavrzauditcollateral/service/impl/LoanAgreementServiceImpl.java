@@ -43,58 +43,22 @@ public class LoanAgreementServiceImpl implements ObjectAuditService {
     @Override
     @Transactional
     public void executeAuditAboutNewObject(Long id){
-        log.debug("start executeAuditAboutNewObject. loanAgreementId: {}", id);
+        log.info("start executeAuditAboutNewObject. loanAgreementId: {}", id);
 
         Collection<AuditResult> auditResults = new ArrayList<>();
 
         repositoryAuditLoanAgreement.isDateClosedOverDue(id).ifPresent(objectAudit -> {
-            AuditResult auditResult = AuditResult.builder()
-                    .date(LocalDate.now())
-                    .typeOfObject(TypeOfObject.LOAN_AGREEMENT)
-                    .objectId(objectAudit.getId())
-                    .nameOfObject(objectAudit.getNameObject())
-                    .typeOfAudit(TypeOfAudit.LOAN_AGREEMENT_DATE_CLOSED)
-                    .valueInField(objectAudit.getWrongValueInField())
-                    .auditLevel(AuditLevel.LOW)
-                    .descriptionResult(descriptionResult.getLoanAgreementDateClosed())
-                    .advice(auditAdvice.getLoanAgreementDateClosed())
-                    .auditStatus(AuditStatus.ACTUAL)
-                    .build();
-
+            AuditResult auditResult = createAuditResultDateClosed(objectAudit);
             auditResults.add(auditResult);
         });
 
         repositoryAuditLoanAgreement.isLowCollateralSum(id).ifPresent(objectAudit -> {
-            AuditResult auditResult = AuditResult.builder()
-                    .date(LocalDate.now())
-                    .typeOfObject(TypeOfObject.LOAN_AGREEMENT)
-                    .objectId(objectAudit.getId())
-                    .nameOfObject(objectAudit.getNameObject())
-                    .typeOfAudit(TypeOfAudit.LOAN_AGREEMENT_AMOUNT_LA)
-                    .valueInField(objectAudit.getWrongValueInField())
-                    .auditLevel(AuditLevel.LOW)
-                    .descriptionResult(descriptionResult.getLoanAgreementAmount())
-                    .advice(auditAdvice.getLoanAgreementAmount())
-                    .auditStatus(AuditStatus.ACTUAL)
-                    .build();
-
+            AuditResult auditResult = createAuditResultLowCollateralSum(objectAudit);
             auditResults.add(auditResult);
         });
 
         repositoryAuditLoanAgreement.isHaveNotPledgeAgreements(id).ifPresent(objectAudit -> {
-            AuditResult auditResult = AuditResult.builder()
-                    .date(LocalDate.now())
-                    .typeOfObject(TypeOfObject.LOAN_AGREEMENT)
-                    .objectId(objectAudit.getId())
-                    .nameOfObject(objectAudit.getNameObject())
-                    .typeOfAudit(TypeOfAudit.LOAN_AGREEMENT_NOT_EXIST_PA)
-                    .valueInField(objectAudit.getWrongValueInField())
-                    .auditLevel(AuditLevel.MEDIUM)
-                    .descriptionResult(descriptionResult.getLoanAgreementNotExistPA())
-                    .advice(auditAdvice.getLoanAgreementNotExistPA())
-                    .auditStatus(AuditStatus.ACTUAL)
-                    .build();
-
+            AuditResult auditResult = createAuditResultHaveNotPA(objectAudit);
             auditResults.add(auditResult);
         });
 
@@ -104,7 +68,7 @@ public class LoanAgreementServiceImpl implements ObjectAuditService {
     @Override
     @Transactional
     public void executeAuditAboutExistObject(Long id){
-        log.debug("start executeAuditAboutExistObject. loanAgreementId: {}", id);
+        log.info("start executeAuditAboutExistObject. loanAgreementId: {}", id);
 
         Collection<AuditResult> auditResults = new ArrayList<>();
 
@@ -147,7 +111,7 @@ public class LoanAgreementServiceImpl implements ObjectAuditService {
     @Override
     @Transactional
     public void executeAuditAboutAllObjects(){
-        log.debug("start executeAuditAboutAllObjects (Loan Agreements)");
+        log.info("start executeAuditAboutAllObjects (Loan Agreements)");
 
         Collection<AuditResult> auditResults = new ArrayList<>();
 
@@ -161,6 +125,7 @@ public class LoanAgreementServiceImpl implements ObjectAuditService {
             auditResults.add(createAuditResultHaveNotPA(objectAudit)));
 
         repositoryAuditResult.saveAll(auditResults);
+        log.info("end executeAuditAboutAllObjects (Loan Agreements)");
     }
 
     @Override

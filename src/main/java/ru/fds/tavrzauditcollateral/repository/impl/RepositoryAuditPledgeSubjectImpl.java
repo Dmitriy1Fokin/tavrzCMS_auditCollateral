@@ -21,7 +21,7 @@ public class RepositoryAuditPledgeSubjectImpl implements RepositoryAuditPledgeSu
     private static final String PARAM_PS_ID = "pledgeSubjectId";
     private static final String PARAM_DATE_NOW = "dateNow";
     private static final String PARAM_DATE_OVERDUE = "dateOverdue";
-    private static final String QUERY_PS_WITH_LOW_LIQUIDITY_AND_NOT_ZERO_SS = "select ps.pledge_subject_id, ps.name, ps.ss\n  " +
+    private static final String QUERY_PS_WITH_LOW_LIQUIDITY_AND_NOT_ZERO_SS = "select distinct ps.pledge_subject_id, ps.name, ps.ss\n  " +
                                                                                 "from pledge_subject ps\n " +
                                                                                 "join dz_ps dp on ps.pledge_subject_id = dp.pledge_subject_id\n " +
                                                                                 "join dz d on dp.dz_id = d.dz_id\n" +
@@ -34,7 +34,7 @@ public class RepositoryAuditPledgeSubjectImpl implements RepositoryAuditPledgeSu
                                                                             "and ps.ss > 0\n" +
                                                                             "and ps.pledge_subject_id = :pledgeSubjectId";
 
-    private static final String QUERY_PS_WITH_ZERO_ZSDZ = "select ps.pledge_subject_id, ps.name, ps.zs_dz\n" +
+    private static final String QUERY_PS_WITH_ZERO_ZSDZ = "select distinct ps.pledge_subject_id, ps.name, ps.zs_dz\n" +
                                                             "from pledge_subject ps\n  " +
                                                             "join dz_ps dp on ps.pledge_subject_id = dp.pledge_subject_id\n " +
                                                             "join dz d on dp.dz_id = d.dz_id\n" +
@@ -45,7 +45,7 @@ public class RepositoryAuditPledgeSubjectImpl implements RepositoryAuditPledgeSu
                                                         "where ps.zs_dz = 0\n" +
                                                         "and ps.pledge_subject_id  = :pledgeSubjectId";
 
-    private static final String QUERY_PS_WITH_ZERO_ZSZZ = "select ps.pledge_subject_id, ps.name, ps.zs_zz\n" +
+    private static final String QUERY_PS_WITH_ZERO_ZSZZ = "select distinct ps.pledge_subject_id, ps.name, ps.zs_zz\n" +
                                                             "from pledge_subject ps\n   " +
                                                             "join dz_ps dp on ps.pledge_subject_id = dp.pledge_subject_id\n  " +
                                                             "join dz d on dp.dz_id = d.dz_id\n" +
@@ -56,7 +56,7 @@ public class RepositoryAuditPledgeSubjectImpl implements RepositoryAuditPledgeSu
                                                         "where ps.zs_zz = 0\n" +
                                                         "and ps.pledge_subject_id = :pledgeSubjectId  ";
 
-    private static final String QUERY_PS_WITH_ZERO_RSDZ = "select ps.pledge_subject_id, ps.name, ps.rs_dz\n" +
+    private static final String QUERY_PS_WITH_ZERO_RSDZ = "select distinct ps.pledge_subject_id, ps.name, ps.rs_dz\n" +
                                                             "from pledge_subject ps \n" +
                                                             "join dz_ps dp on ps.pledge_subject_id = dp.pledge_subject_id\n  " +
                                                             "join dz d on dp.dz_id = d.dz_id\n" +
@@ -67,7 +67,7 @@ public class RepositoryAuditPledgeSubjectImpl implements RepositoryAuditPledgeSu
                                                         "where ps.rs_dz = 0\n" +
                                                         "and ps.pledge_subject_id = :pledgeSubjectId  ";
 
-    private static final String QUERY_PS_WITH_ZERO_RSZZ = "select ps.pledge_subject_id, ps.name, ps.rs_zz\n" +
+    private static final String QUERY_PS_WITH_ZERO_RSZZ = "select distinct ps.pledge_subject_id, ps.name, ps.rs_zz\n" +
                                                             "from pledge_subject ps  \n" +
                                                             "join dz_ps dp on ps.pledge_subject_id = dp.pledge_subject_id \n" +
                                                             "join dz d on dp.dz_id = d.dz_id\n" +
@@ -78,7 +78,7 @@ public class RepositoryAuditPledgeSubjectImpl implements RepositoryAuditPledgeSu
                                                         "where ps.rs_zz = 0\n" +
                                                         "and ps.pledge_subject_id = :pledgeSubjectId ";
 
-    private static final String QUERY_PS_WITH_ZERO_SS = "select ps.pledge_subject_id, ps.name, ps.ss\n" +
+    private static final String QUERY_PS_WITH_ZERO_SS = "select distinct ps.pledge_subject_id, ps.name, ps.ss\n" +
                                                             "from pledge_subject ps   \n" +
                                                             "join dz_ps dp on ps.pledge_subject_id = dp.pledge_subject_id \n" +
                                                             "join dz d on dp.dz_id = d.dz_id\n" +
@@ -89,7 +89,7 @@ public class RepositoryAuditPledgeSubjectImpl implements RepositoryAuditPledgeSu
                                                     "where ps.ss = 0\n" +
                                                     "and ps.pledge_subject_id = :pledgeSubjectId ";
 
-    private static final String QUERY_PS_WITH_MONITORING_OVERDUE = "select ps.pledge_subject_id, ps.name, ps.date_monitoring\n" +
+    private static final String QUERY_PS_WITH_MONITORING_OVERDUE = "select distinct ps.pledge_subject_id, ps.name, ps.date_monitoring\n" +
                                                                     "from pledge_subject ps\n" +
                                                                     "join dz_ps dp on ps.pledge_subject_id = dp.pledge_subject_id  \n" +
                                                                     "join dz d on dp.dz_id = d.dz_id\n" +
@@ -100,7 +100,7 @@ public class RepositoryAuditPledgeSubjectImpl implements RepositoryAuditPledgeSu
                                                                 "where ps.date_monitoring < :dateOverdue\n" +
                                                                 "and ps.pledge_subject_id = :pledgeSubjectId   ";
 
-    private static final String QUERY_PS_WITH_CONCLUSION_OVERDUE = "select ps.pledge_subject_id, ps.name, ps.date_conclusion\n" +
+    private static final String QUERY_PS_WITH_CONCLUSION_OVERDUE = "select distinct ps.pledge_subject_id, ps.name, ps.date_conclusion\n" +
                                                                     "from pledge_subject ps\n" +
                                                                     "join dz_ps dp on ps.pledge_subject_id = dp.pledge_subject_id  \n" +
                                                                     "join dz d on dp.dz_id = d.dz_id\n" +
@@ -111,7 +111,7 @@ public class RepositoryAuditPledgeSubjectImpl implements RepositoryAuditPledgeSu
                                                                 "where ps.date_conclusion < :dateOverdue\n" +
                                                                 "and ps.pledge_subject_id = :pledgeSubjectId";
 
-    private static final String QUERY_PS_LOSING = "select ps.pledge_subject_id, ps.name, ps.status_monitoring\n" +
+    private static final String QUERY_PS_LOSING = "select distinct ps.pledge_subject_id, ps.name, ps.status_monitoring\n" +
                                                     "from pledge_subject ps\n" +
                                                     "join dz_ps dp on ps.pledge_subject_id = dp.pledge_subject_id\n   " +
                                                     "join dz d on dp.dz_id = d.dz_id\n" +
@@ -122,7 +122,7 @@ public class RepositoryAuditPledgeSubjectImpl implements RepositoryAuditPledgeSu
                                                     "where ps.status_monitoring = 'утрата'\n" +
                                                     "and ps.pledge_subject_id = :pledgeSubjectId   ";
 
-    private static final String QUERY_PS_WITHOUT_INSURANCE = "select ps.pledge_subject_id, ps.name, count(i.insurance_id)\n" +
+    private static final String QUERY_PS_WITHOUT_INSURANCE = "select distinct ps.pledge_subject_id, ps.name, count(i.insurance_id)\n" +
                                                                 "from pledge_subject ps\n" +
                                                                 "left join insurance i on ps.pledge_subject_id = i.pledgesubject_id\n" +
                                                                 "join dz_ps dp on ps.pledge_subject_id = dp.pledge_subject_id\n   " +
@@ -139,7 +139,7 @@ public class RepositoryAuditPledgeSubjectImpl implements RepositoryAuditPledgeSu
                                                                 "group by 1\n" +
                                                                 "having count(i.insurance_id) = 0";
 
-    private static final String QUERY_PS_WITHOUT_ENCUMBRANCE = "select ps.pledge_subject_id, ps.name, 0\n" +
+    private static final String QUERY_PS_WITHOUT_ENCUMBRANCE = "select distinct ps.pledge_subject_id, ps.name, 0\n" +
                                                                 "from pledge_subject ps\n" +
                                                                 "join dz_ps dp on ps.pledge_subject_id =  dp.pledge_subject_id\n" +
                                                                 "join dz d on dp.dz_id = d.dz_id\n" +
@@ -147,41 +147,52 @@ public class RepositoryAuditPledgeSubjectImpl implements RepositoryAuditPledgeSu
                                                                 "and ps.pledge_subject_id not in(select e.pledgesubject_id\n" +
                                                                 "                                from encumbrance e\n" +
                                                                 "                                where e.type_of_encumbrance = 'залог')";
-    private static final String QUERY_IS_HAVE_NOT_ENCUMBRANCE = "select ps.pledge_subject_id, ps.name, 0\n" +
+    private static final String QUERY_IS_HAVE_NOT_ENCUMBRANCE = "select distinct ps.pledge_subject_id, ps.name, 0\n" +
                                                                     "from pledge_subject ps\n" +
                                                                     "join encumbrance e on ps.pledge_subject_id = e.encumbrance_id\n" +
                                                                     "where e.type_of_encumbrance != 'залог'\n" +
-                                                                    "and ps.pledge_subject_id = 12";
+                                                                    "and ps.pledge_subject_id = :pledgeSubjectId";
 
-    private static final String QUERY_PS_WITH_OTHER_ENCUMBRANCE = "select ps.pledge_subject_id, ps.name, e.type_of_encumbrance\n" +
+    private static final String QUERY_PS_WITH_OTHER_ENCUMBRANCE = "select distinct ps.pledge_subject_id, ps.name, e.type_of_encumbrance\n" +
                                                                     "from pledge_subject ps\n" +
                                                                     "join encumbrance e on ps.pledge_subject_id = e.pledgesubject_id\n" +
                                                                     "join dz_ps dp on ps.pledge_subject_id =  dp.pledge_subject_id\n" +
                                                                     "join dz d on dp.dz_id = d.dz_id\n" +
                                                                     "where d.status = 'открыт'\n" +
                                                                     "and e.type_of_encumbrance = 'арест'";
-    private static final String QUERY_IS_HAVE_OTHER_ENCUMBRANCE = "select ps.pledge_subject_id, ps.name, e.type_of_encumbrance\n" +
+    private static final String QUERY_IS_HAVE_OTHER_ENCUMBRANCE = "select distinct ps.pledge_subject_id, ps.name, e.type_of_encumbrance\n" +
                                                                     "from pledge_subject ps\n" +
                                                                     "join encumbrance e on ps.pledge_subject_id = e.pledgesubject_id\n" +
                                                                     "and e.type_of_encumbrance = 'арест'\n" +
                                                                     "and ps.pledge_subject_id =  :pledgeSubjectId";
 
-    private static final String QUERY_PS_WITH_INSURANCE_OVERDUE = "select ps.pledge_subject_id, ps.name, i.date_end\n" +
+    private static final String QUERY_PS_WITH_INSURANCE_OVERDUE = "select distinct ps.pledge_subject_id, ps.name, i.date_end\n" +
                                                                     "from pledge_subject ps\n" +
                                                                     "join insurance i on ps.pledge_subject_id = i.pledgesubject_id\n" +
                                                                     "join dz_ps dp on ps.pledge_subject_id = dp.pledge_subject_id\n" +
                                                                     "join dz d on dp.dz_id = d.dz_id\n" +
                                                                     "where d.status = 'открыт'\n" +
                                                                     "and ps.insurance_obligation = 'да'\n" +
+                                                                    "and i.insurance_id = (select i2.insurance_id\n" +
+                                                                    "                        from insurance i2\n" +
+                                                                    "                        where i2.pledgesubject_id = ps.pledge_subject_id\n" +
+                                                                    "                        order by i2.date_end desc\n" +
+                                                                    "                        limit 1)\n" +
                                                                     "and i.date_end < :dateNow";
+
     private static final String QUERY_IS_INSURANCE_OVERDUE = "select ps.pledge_subject_id, ps.name, i.date_end\n" +
                                                                 "from pledge_subject ps\n" +
                                                                 "join insurance i on ps.pledge_subject_id = i.pledgesubject_id\n" +
                                                                 "where ps.insurance_obligation = 'да'\n" +
+                                                                "and i.insurance_id = (select i2.insurance_id\n" +
+                                                                "                      from insurance i2\n" +
+                                                                "                      where i2.pledgesubject_id = ps.pledge_subject_id\n" +
+                                                                "                      order by i2.date_end desc\n" +
+                                                                "                      limit 1)\n" +
                                                                 "and i.date_end < :dateNow\n" +
-                                                                "and ps.pledge_subject_id =  :pledgeSubjectId";
+                                                                "and ps.pledge_subject_id = :pledgeSubjectId";
 
-    private static final String QUERY_PS_WITH_ENCUMBRANCE_OVERDUE = "select ps.pledge_subject_id, ps.name, e.date_end\n" +
+    private static final String QUERY_PS_WITH_ENCUMBRANCE_OVERDUE = "select distinct ps.pledge_subject_id, ps.name, e.date_end\n" +
                                                                     "from pledge_subject ps\n" +
                                                                     "join encumbrance e on ps.pledge_subject_id = e.pledgesubject_id\n " +
                                                                     "join dz_ps dp on ps.pledge_subject_id = dp.pledge_subject_id\n" +
