@@ -22,6 +22,10 @@ spring:
           use_jdbc_metadata_defaults: false
   application:
     name: tavrz-cms-audit
+  cloud:
+    loadbalancer:
+      ribbon:
+        enabled: false
 
 server:
   port: 7979
