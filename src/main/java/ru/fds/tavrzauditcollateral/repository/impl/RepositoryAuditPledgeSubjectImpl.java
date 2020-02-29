@@ -146,11 +146,11 @@ public class RepositoryAuditPledgeSubjectImpl implements RepositoryAuditPledgeSu
                                                                 "where d.status = 'открыт'\n" +
                                                                 "and ps.pledge_subject_id not in(select e.pledgesubject_id\n" +
                                                                 "                                from encumbrance e\n" +
-                                                                "                                where e.type_of_encumbrance = 'залог')";
+                                                                "                                where e.type_of_encumbrance = 'залог Банка')";
     private static final String QUERY_IS_HAVE_NOT_ENCUMBRANCE = "select distinct ps.pledge_subject_id, ps.name, 0\n" +
                                                                     "from pledge_subject ps\n" +
-                                                                    "join encumbrance e on ps.pledge_subject_id = e.encumbrance_id\n" +
-                                                                    "where e.type_of_encumbrance != 'залог'\n" +
+                                                                    "join encumbrance e on ps.pledge_subject_id = e.pledgesubject_id\n" +
+                                                                    "where e.type_of_encumbrance != 'залог Банка'\n" +
                                                                     "and ps.pledge_subject_id = :pledgeSubjectId";
 
     private static final String QUERY_PS_WITH_OTHER_ENCUMBRANCE = "select distinct ps.pledge_subject_id, ps.name, e.type_of_encumbrance\n" +
@@ -159,11 +159,11 @@ public class RepositoryAuditPledgeSubjectImpl implements RepositoryAuditPledgeSu
                                                                     "join dz_ps dp on ps.pledge_subject_id =  dp.pledge_subject_id\n" +
                                                                     "join dz d on dp.dz_id = d.dz_id\n" +
                                                                     "where d.status = 'открыт'\n" +
-                                                                    "and e.type_of_encumbrance = 'арест'";
+                                                                    "and e.type_of_encumbrance in ('арест', 'залог третьих лиц')";
     private static final String QUERY_IS_HAVE_OTHER_ENCUMBRANCE = "select distinct ps.pledge_subject_id, ps.name, e.type_of_encumbrance\n" +
                                                                     "from pledge_subject ps\n" +
                                                                     "join encumbrance e on ps.pledge_subject_id = e.pledgesubject_id\n" +
-                                                                    "and e.type_of_encumbrance = 'арест'\n" +
+                                                                    "and e.type_of_encumbrance in ('арест', 'залог третьих лиц')\n" +
                                                                     "and ps.pledge_subject_id =  :pledgeSubjectId";
 
     private static final String QUERY_PS_WITH_INSURANCE_OVERDUE = "select distinct ps.pledge_subject_id, ps.name, i.date_end\n" +
@@ -198,13 +198,13 @@ public class RepositoryAuditPledgeSubjectImpl implements RepositoryAuditPledgeSu
                                                                     "join dz_ps dp on ps.pledge_subject_id = dp.pledge_subject_id\n" +
                                                                     "join dz d on dp.dz_id = d.dz_id\n" +
                                                                     "where d.status = 'открыт'\n" +
-                                                                    "and e.type_of_encumbrance = 'залог'\n" +
+                                                                    "and e.type_of_encumbrance = 'залог Банка'\n" +
                                                                     "and e.date_end < :dateNow";
     private static final String QUERY_IS_ENCUMBRANCE_OVERDUE = "select ps.pledge_subject_id, ps.name, e.date_end\n" +
                                                                 "from pledge_subject ps\n" +
                                                                 "join encumbrance e on ps.pledge_subject_id = e.pledgesubject_id\n " +
                                                                 "where e.date_end < :dateNow\n" +
-                                                                "and e.type_of_encumbrance = 'залог'\n" +
+                                                                "and e.type_of_encumbrance = 'залог Банка'\n" +
                                                                 "and ps.pledge_subject_id = :pledgeSubjectId";
 
     private final NamedParameterJdbcTemplate template;
