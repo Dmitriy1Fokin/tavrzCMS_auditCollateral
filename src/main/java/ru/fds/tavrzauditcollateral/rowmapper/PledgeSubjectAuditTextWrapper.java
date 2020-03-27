@@ -15,7 +15,7 @@ public class PledgeSubjectAuditTextWrapper implements RowMapper<ObjectAudit> {
         return ObjectAuditImpl.builder()
                 .id(rs.getLong(1))
                 .name(rs.getString(2))
-                .valueInField(rs.getString(2))
+                .valueInField(rs.getString(3))
                 .build();
     }
 }

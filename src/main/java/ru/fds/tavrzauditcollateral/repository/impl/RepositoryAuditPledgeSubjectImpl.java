@@ -149,8 +149,10 @@ public class RepositoryAuditPledgeSubjectImpl implements RepositoryAuditPledgeSu
                                                                 "                                where e.type_of_encumbrance = 'залог Банка')";
     private static final String QUERY_IS_HAVE_NOT_ENCUMBRANCE = "select distinct ps.pledge_subject_id, ps.name, 0\n" +
                                                                     "from pledge_subject ps\n" +
-                                                                    "join encumbrance e on ps.pledge_subject_id = e.pledgesubject_id\n" +
-                                                                    "where e.type_of_encumbrance != 'залог Банка'\n" +
+                                                                    "where ps.pledge_subject_id not in (select e.pledgesubject_id\n" +
+                                                                    "                                   from encumbrance e\n" +
+                                                                    "                                   where e.type_of_encumbrance = 'залог Банка'\n" +
+                                                                    "                                   and e.pledgesubject_id = ps.pledge_subject_id)\n" +
                                                                     "and ps.pledge_subject_id = :pledgeSubjectId";
 
     private static final String QUERY_PS_WITH_OTHER_ENCUMBRANCE = "select distinct ps.pledge_subject_id, ps.name, e.type_of_encumbrance\n" +
